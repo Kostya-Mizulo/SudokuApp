@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 
 import 'screens/main_menu/view/view.dart';
 
+// Цвет текста/иконок в топбаре, боттомбаре, кнопках и границах кнопок.
+const Color kAccentColor = Color(0xFF00B5C8);
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   // Полноэкранный режим: прячем системные кнопки (назад/дом/последние).
@@ -47,7 +50,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 198, 174, 239)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 238, 233, 246)).copyWith(primary: kAccentColor),
       ),
       home: const MainMenuScreen(title: 'Судоку здесь'),
     );

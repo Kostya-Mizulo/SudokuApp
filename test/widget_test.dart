@@ -8,7 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:sudokuapp/main.dart';
+import 'package:sudokuapp/screens/my_app/view/view.dart';
 
 void main() {
   testWidgets('Bottom bar shows both tabs and toggles selection',

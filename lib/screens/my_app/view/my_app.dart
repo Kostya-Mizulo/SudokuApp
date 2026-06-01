@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../resources/theme.dart';
 import '../../main_menu/view/view.dart';
-
-// Цвет текста/иконок в топбаре, боттомбаре, кнопках и границах кнопок.
-const Color kAccentColor = Color(0xFF00B5C8);
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -39,9 +37,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Судоку',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 238, 233, 246)).copyWith(primary: kAccentColor),
-      ),
+      theme: miamiBlueTheme,
       home: const MainMenuScreen(title: 'Судоку здесь'),
     );
   }

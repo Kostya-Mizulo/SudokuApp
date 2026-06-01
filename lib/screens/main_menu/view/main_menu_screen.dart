@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../user_menu/view/view.dart';
 import '../widgets/widgets.dart';
 
 class MainMenuScreen extends StatefulWidget {
@@ -14,6 +16,8 @@ class MainMenuScreen extends StatefulWidget {
 class _MainMenuScreenState extends State<MainMenuScreen> {
   /// Индекс выбранной вкладки нижней панели: 0 — «Главная», 1 — «Я».
   int _selectedIndex = 0;
+
+  static const _titles = ['Главная', 'Я'];
 
   void _onTabSelected(int index) {
     setState(() {
@@ -31,19 +35,35 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
-          widget.title,
+          _titles[_selectedIndex],
           style: TextStyle(color: Theme.of(context).colorScheme.primary),
         ),
         centerTitle: true,
       ),
-      body: const Stack(
-        alignment: Alignment.bottomCenter,
+      body: IndexedStack(
+        index: _selectedIndex,
         children: [
-          SizedBox.expand(),
-          Padding(
-            padding: EdgeInsets.only(bottom: 48),
-            child: NewGameButton(),
+          Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              const SizedBox.expand(),
+              Align(
+                alignment: const Alignment(0, -0.4),
+                child: SvgPicture.asset(
+                  'lib/resources/images/sudoku_icon.svg',
+                  width: 160,
+                  height: 160,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 48),
+                child: NewGameButton(
+                  onPressed: () => DifficultyPopup.show(context),
+                ),
+              ),
+            ],
           ),
+          const UserMenuBody(),
         ],
       ),
       bottomNavigationBar: MainBottomBar(

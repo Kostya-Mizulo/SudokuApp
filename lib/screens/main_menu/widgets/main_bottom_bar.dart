@@ -27,7 +27,7 @@ class MainBottomBar extends StatelessWidget {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.01),
           // Кнопки сдвинуты к своим краям: расстояние между ними (flex 5)
           // на 25% больше, чем от каждой кнопки до её края (flex 4).
           child: Row(
@@ -74,21 +74,26 @@ class _BottomBarItem extends StatelessWidget {
     final Color color = selected
         ? Theme.of(context).colorScheme.primary
         : Theme.of(context).disabledColor;
+    final size = MediaQuery.of(context).size;
+
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(size.width * 0.032),
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 7.5),
+        padding: EdgeInsets.symmetric(
+          horizontal: size.width * 0.08,
+          vertical: size.height * 0.01,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: color, size: 30),
-            const SizedBox(height: 2.6),
+            Icon(icon, color: color, size: size.width * 0.08),
+            SizedBox(height: size.height * 0.003),
             Text(
               label,
-              style: TextStyle(color: color, fontSize: 15),
+              style: TextStyle(color: color, fontSize: size.width * 0.04),
             ),
           ],
         ),

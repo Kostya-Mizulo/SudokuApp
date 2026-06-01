@@ -7,33 +7,37 @@ class NewGameButton extends StatelessWidget {
 
   final VoidCallback? onPressed;
 
-  static const double _borderRadius = 50;
-  static const double _borderWidth = 8;
+  static const double _borderRadius = 100;
 
   @override
   Widget build(BuildContext context) {
     final Color primary = Theme.of(context).colorScheme.primary;
+    final size = MediaQuery.of(context).size;
+    final borderWidth = size.width * 0.021;
 
     return GestureDetector(
       onTap: onPressed,
       child: CustomPaint(
         painter: _FadingBorderPainter(
           color: primary,
-          borderWidth: _borderWidth,
+          borderWidth: borderWidth,
           radius: _borderRadius,
         ),
         child: Container(
-          margin: const EdgeInsets.all(_borderWidth),
-          padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 14),
+          margin: EdgeInsets.all(borderWidth),
+          padding: EdgeInsets.symmetric(
+            horizontal: size.width * 0.17,
+            vertical: size.height * 0.017,
+          ),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(_borderRadius - _borderWidth),
+            borderRadius: BorderRadius.circular(_borderRadius - borderWidth),
           ),
           child: Text(
             'Новая игра',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: size.width * 0.043,
               fontWeight: FontWeight.w600,
               letterSpacing: 2.5,
               color: primary,

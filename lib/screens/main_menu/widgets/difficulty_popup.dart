@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:sudokuapp/sudoku_logic/sudoku_logic.dart';
+import 'package:sudokuapp/screens/sudoku_9x9_game/view/view.dart';
 
 const _levels = [
-  'Лёгкий',
-  'Средний',
-  'Тяжёлый',
-  'Мастер',
-  '16 × 16',
+  ('Лёгкий', DifficultyLevel.easy),
+  ('Средний', DifficultyLevel.medium),
+  ('Тяжёлый', DifficultyLevel.hard),
+  ('Мастер', DifficultyLevel.master),
+  ('16 × 16', null),
 ];
 
 class DifficultyPopup extends StatelessWidget {
@@ -21,33 +23,39 @@ class DifficultyPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color primary = Theme.of(context).colorScheme.primary;
+    final size = MediaQuery.of(context).size;
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(size.width * 0.064),
+      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 28),
+        padding: EdgeInsets.symmetric(vertical: size.height * 0.035),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'Новая игра',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: size.width * 0.048,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: primary,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: size.height * 0.03),
             for (int i = 0; i < _levels.length; i++) ...[
               if (i > 0)
                 Divider(
                   height: 1,
-                  indent: 24,
-                  endIndent: 24,
+                  indent: size.width * 0.064,
+                  endIndent: size.width * 0.064,
                   color: primary.withValues(alpha: 0.15),
                 ),
-              _LevelItem(label: _levels[i]),
+              _LevelItem(
+                label: _levels[i].$1,
+                difficulty: _levels[i].$2,
+              ),
             ],
           ],
         ),
@@ -57,25 +65,42 @@ class DifficultyPopup extends StatelessWidget {
 }
 
 class _LevelItem extends StatelessWidget {
-  const _LevelItem({required this.label});
+  const _LevelItem({required this.label, required this.difficulty});
 
   final String label;
+  final DifficultyLevel? difficulty;
 
   @override
   Widget build(BuildContext context) {
     final Color primary = Theme.of(context).colorScheme.primary;
+    final size = MediaQuery.of(context).size;
 
     return InkWell(
-      onTap: null,
+      onTap: difficulty == null
+          ? null
+          : () {
+              Navigator.of(context).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) =>
+                      Sudoku9x9GameScreen(difficulty: difficulty!),
+                ),
+              );
+            },
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 28),
+        padding: EdgeInsets.symmetric(
+          vertical: size.height * 0.018,
+          horizontal: size.width * 0.075,
+        ),
         child: Center(
           child: Text(
             label,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: size.width * 0.043,
               fontWeight: FontWeight.w500,
-              color: primary,
+              color: difficulty == null
+                  ? primary.withValues(alpha: 0.4)
+                  : primary,
             ),
           ),
         ),

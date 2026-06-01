@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sudokuapp/sudoku_logic/sudoku_logic.dart';
-import 'package:sudokuapp/screens/sudoku_9x9_game/view/view.dart';
+import 'package:sudokuapp/screens/screens.dart';
 
 const _levels = [
   ('Лёгкий', DifficultyLevel.easy),

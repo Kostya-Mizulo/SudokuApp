@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../resources/theme.dart';
-import '../../main_menu/view/view.dart';
+import '../../../resources/resources.dart';
+import '../../screens.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

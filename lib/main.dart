@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'screens/my_app/view/view.dart';
+import 'screens/screens.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

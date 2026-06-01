@@ -31,7 +31,6 @@ class NumberInputRow extends StatelessWidget {
                     '$number',
                     style: TextStyle(
                       fontSize: 48,
-                      fontWeight: FontWeight.bold,
                       color: color,
                       height: 1,
                     ),

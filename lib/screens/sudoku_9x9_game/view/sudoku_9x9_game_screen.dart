@@ -47,7 +47,9 @@ class _Sudoku9x9GameScreenState extends State<Sudoku9x9GameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
 
     return Scaffold(
       appBar: AppBar(
@@ -55,7 +57,7 @@ class _Sudoku9x9GameScreenState extends State<Sudoku9x9GameScreen> {
         leading: IconButton(
           icon: Icon(
             Icons.chevron_left,
-            size: 36,
+            size: screenWidth * 0.096,
             color: Theme.of(context).colorScheme.primary,
           ),
           onPressed: () => Navigator.of(context).pop(),
@@ -68,14 +70,14 @@ class _Sudoku9x9GameScreenState extends State<Sudoku9x9GameScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 24),
+              padding: EdgeInsets.only(left: screenWidth * 0.064),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     'Уровень',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: screenWidth * 0.04,
                       height: 1.1,
                       color: Theme.of(context).colorScheme.primary,
                     ),
@@ -83,7 +85,7 @@ class _Sudoku9x9GameScreenState extends State<Sudoku9x9GameScreen> {
                   Text(
                     _difficultyLabel,
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: screenWidth * 0.053,
                       height: 1.1,
                       color: Theme.of(context).colorScheme.primary,
                     ),

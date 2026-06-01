@@ -8,6 +8,7 @@ class NumberInputRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme.primary;
+    final cellHeight = MediaQuery.of(context).size.height * 0.06;
 
     return Center(
       child: FractionallySizedBox(
@@ -22,7 +23,7 @@ class NumberInputRow extends StatelessWidget {
               child: GestureDetector(
                 onTap: () => onNumberTap?.call(number),
                 child: Container(
-                height: 48,
+                height: cellHeight,
                 margin: EdgeInsets.zero,
                 child: FittedBox(
                   fit: BoxFit.contain,

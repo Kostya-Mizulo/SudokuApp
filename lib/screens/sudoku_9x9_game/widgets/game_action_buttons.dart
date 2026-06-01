@@ -50,20 +50,21 @@ class _NotesBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     const greyOff = Color(0xFFBDBDBD);
     final accentColor = Theme.of(context).colorScheme.primary;
+    final size = MediaQuery.of(context).size;
 
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: enabled ? 5 : 3,
-        vertical: enabled ? 2 : 1,
+        horizontal: enabled ? size.width * 0.013 : size.width * 0.008,
+        vertical: enabled ? size.height * 0.0025 : size.height * 0.0013,
       ),
       decoration: BoxDecoration(
         color: enabled ? accentColor : greyOff,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(size.width * 0.011),
       ),
       child: Text(
         enabled ? 'ON' : 'OFF',
         style: TextStyle(
-          fontSize: enabled ? 10 : 8,
+          fontSize: enabled ? size.width * 0.027 : size.width * 0.021,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
@@ -89,6 +90,8 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -97,21 +100,21 @@ class _ActionButton extends StatelessWidget {
           Stack(
             clipBehavior: Clip.none,
             children: [
-              Icon(icon, color: color, size: 28),
+              Icon(icon, color: color, size: size.width * 0.075),
               if (badge != null)
                 Positioned(
-                  left: 20,
-                  bottom: -4,
+                  left: size.width * 0.053,
+                  bottom: -size.width * 0.011,
                   child: badge!,
                 ),
             ],
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: size.height * 0.005),
           Text(
             label,
             style: TextStyle(
               color: color,
-              fontSize: 13,
+              fontSize: size.width * 0.035,
             ),
           ),
         ],

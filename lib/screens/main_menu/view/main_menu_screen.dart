@@ -27,6 +27,8 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -51,12 +53,12 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                 alignment: const Alignment(0, -0.4),
                 child: SvgPicture.asset(
                   'lib/resources/images/sudoku_icon.svg',
-                  width: 160,
-                  height: 160,
+                  width: size.width * 0.42,
+                  height: size.width * 0.42,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 48),
+                padding: EdgeInsets.only(bottom: size.height * 0.06),
                 child: NewGameButton(
                   onPressed: () => DifficultyPopup.show(context),
                 ),

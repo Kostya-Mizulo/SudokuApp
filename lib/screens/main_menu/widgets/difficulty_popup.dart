@@ -23,30 +23,33 @@ class DifficultyPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color primary = Theme.of(context).colorScheme.primary;
+    final size = MediaQuery.of(context).size;
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(size.width * 0.064),
+      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 28),
+        padding: EdgeInsets.symmetric(vertical: size.height * 0.035),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'Новая игра',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: size.width * 0.048,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 2,
                 color: primary,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: size.height * 0.03),
             for (int i = 0; i < _levels.length; i++) ...[
               if (i > 0)
                 Divider(
                   height: 1,
-                  indent: 24,
-                  endIndent: 24,
+                  indent: size.width * 0.064,
+                  endIndent: size.width * 0.064,
                   color: primary.withValues(alpha: 0.15),
                 ),
               _LevelItem(
@@ -70,6 +73,7 @@ class _LevelItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color primary = Theme.of(context).colorScheme.primary;
+    final size = MediaQuery.of(context).size;
 
     return InkWell(
       onTap: difficulty == null
@@ -84,12 +88,15 @@ class _LevelItem extends StatelessWidget {
               );
             },
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 28),
+        padding: EdgeInsets.symmetric(
+          vertical: size.height * 0.018,
+          horizontal: size.width * 0.075,
+        ),
         child: Center(
           child: Text(
             label,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: size.width * 0.043,
               fontWeight: FontWeight.w500,
               color: difficulty == null
                   ? primary.withValues(alpha: 0.4)

@@ -1,0 +1,58 @@
+import 'package:flutter/material.dart';
+
+const double _kBoxBorder = 1.5;
+const double _kCellBorder = 0.5;
+
+class SudokuCell extends StatelessWidget {
+  const SudokuCell({
+    super.key,
+    required this.row,
+    required this.col,
+    required this.isSelected,
+    required this.isHighlighted,
+    required this.onTap,
+  });
+
+  final int row;
+  final int col;
+  final bool isSelected;
+  final bool isHighlighted;
+  final VoidCallback onTap;
+
+  BorderSide _rightBorder() {
+    if (col == 8) return BorderSide.none;
+    if (col % 3 == 2) return const BorderSide(color: Colors.black, width: _kBoxBorder);
+    return const BorderSide(color: Colors.grey, width: _kCellBorder);
+  }
+
+  BorderSide _bottomBorder() {
+    if (row == 8) return BorderSide.none;
+    if (row % 3 == 2) return const BorderSide(color: Colors.black, width: _kBoxBorder);
+    return const BorderSide(color: Colors.grey, width: _kCellBorder);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final color = isSelected
+        ? primary.withValues(alpha: 0.35)
+        : isHighlighted
+            ? primary.withValues(alpha: 0.10)
+            : Theme.of(context).scaffoldBackgroundColor;
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            color: color,
+            border: Border(
+              right: _rightBorder(),
+              bottom: _bottomBorder(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

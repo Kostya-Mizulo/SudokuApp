@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/bloc.dart';
 import 'sudoku_cell.dart';
 
 const double _kMapBorder = 1.5;
 
 class SudokuMap extends StatelessWidget {
-  const SudokuMap({
-    super.key,
-    required this.selectedRow,
-    required this.selectedCol,
-    required this.onCellTap,
-  });
-
-  final int? selectedRow;
-  final int? selectedCol;
-  final void Function(int row, int col) onCellTap;
+  const SudokuMap({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,27 +19,33 @@ class SudokuMap extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black, width: _kMapBorder),
       ),
-      child: Column(
-        children: List.generate(
-          9,
-          (row) => Expanded(
-            child: Row(
-              children: List.generate(
-                9,
-                (col) => SudokuCell(
-                  row: row,
-                  col: col,
-                  isSelected: selectedRow == row && selectedCol == col,
-                  isHighlighted: selectedRow != null &&
-                      selectedCol != null &&
-                      !(selectedRow == row && selectedCol == col) &&
-                      (selectedRow == row || selectedCol == col),
-                  onTap: () => onCellTap(row, col),
+      child: BlocBuilder<SudokuGameBloc, SudokuGameState>(
+        builder: (context, state) {
+          final cells = state is SudokuGameLoaded ? state.game.cells : null;
+          return Column(
+            children: List.generate(
+              9,
+              (row) => Expanded(
+                child: Row(
+                  children: List.generate(
+                    9,
+                    (col) => SudokuCell(
+                      row: row,
+                      col: col,
+                      insertedNumber: cells?[row][col].getInsertedNumber() ?? 0,
+                      isGivenNumber: cells?[row][col].isInsertedByStart ?? false,
+                      isSelected: cells?[row][col].isSelected ?? false,
+                      isHighlighted: cells?[row][col].isHighlighted ?? false,
+                      onTap: () => context
+                          .read<SudokuGameBloc>()
+                          .add(SudokuGameCellSelected(row, col)),
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

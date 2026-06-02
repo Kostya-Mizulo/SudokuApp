@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'difficulty_level.dart';
-import 'sudoku.dart';
+import 'sudoku_solver.dart';
 import 'sudoku_parser.dart';
 import 'sudoku_size.dart';
 
@@ -81,12 +81,12 @@ class SudokuCreator {
     return false;
   }
 
-  /// Создаёт [Sudoku] и запускает [Sudoku.solveSudoku]. Нормальное завершение —
+  /// Создаёт [SudokuSolver] и запускает [SudokuSolver.solveSudoku]. Нормальное завершение —
   /// судоку решается логически; [SudokuStuckException] — решатель застрял
   /// (в Java эту роль играл NullPointerException).
   static bool _isSolvable(List<List<int>> grid, int n) {
     try {
-      final sudoku = Sudoku(n);
+      final sudoku = SudokuSolver(n);
       sudoku.initiateSudokuMap(grid);
       sudoku.solveSudoku();
       return true;

@@ -25,13 +25,13 @@ class SudokuParser {
 
   /// Загружает из ассета `lib/puzzles/<difficulty>.json` первую головоломку
   /// заданного уровня сложности, у которой `isResolved == false` (решённые
-  /// пропускаются), и возвращает её как сетку [Cell].
+  /// пропускаются), и возвращает её `id` вместе с сеткой [Cell].
   ///
   /// В каждой ячейке `realNumber` — число из `solvedGrid`, а `numberByStart`
   /// (через [Cell.setNumberByStart]) — число из `puzzleGrid` (`0` = пусто).
   ///
   /// Бросает [StateError], если нерешённых головоломок не осталось.
-  static Future<List<List<Cell>>> getSudokuPuzzle(
+  static Future<({int id, List<List<Cell>> cells})> getSudokuPuzzle(
       DifficultyLevel difficulty) async {
     final assetPath = '$_assetsDir${difficulty.name.toLowerCase()}.json';
     final content = await rootBundle.loadString(assetPath);
@@ -55,7 +55,10 @@ class SudokuParser {
         .map((row) => (row as List<dynamic>).cast<int>())
         .toList();
 
-    return _buildCells(solvedGrid, puzzleGrid);
+    return (
+      id: puzzle['id'] as int,
+      cells: _buildCells(solvedGrid, puzzleGrid),
+    );
   }
 
   static List<List<Cell>> _buildCells(

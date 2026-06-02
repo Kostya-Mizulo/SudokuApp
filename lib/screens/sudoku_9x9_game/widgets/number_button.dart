@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class NumberButton extends StatefulWidget {
+import '../bloc/bloc.dart';
+
+class NumberButton extends StatelessWidget {
   const NumberButton({
     super.key,
     required this.number,
@@ -11,37 +14,43 @@ class NumberButton extends StatefulWidget {
   final VoidCallback? onTap;
 
   @override
-  State<NumberButton> createState() => _NumberButtonState();
-}
-
-class _NumberButtonState extends State<NumberButton> {
-  // TODO: replace with value from BLoC
-  bool numberAvailable = true;
-
-  @override
   Widget build(BuildContext context) {
-    if (!numberAvailable) return const SizedBox.shrink();
+    return BlocBuilder<SudokuGameBloc, SudokuGameState>(
+      buildWhen: (prev, curr) {
+        if (curr is! SudokuGameLoaded) return false;
+        if (prev is! SudokuGameLoaded) return true;
+        return prev.game.numberButtonsVisibility[number] !=
+            curr.game.numberButtonsVisibility[number];
+      },
+      builder: (context, state) {
+        final isVisible = state is SudokuGameLoaded
+            ? (state.game.numberButtonsVisibility[number] ?? true)
+            : true;
 
-    final color = Theme.of(context).colorScheme.primary;
-    final cellHeight = MediaQuery.of(context).size.height * 0.06;
+        if (!isVisible) return const SizedBox.shrink();
 
-    return GestureDetector(
-      onTap: widget.onTap,
-      child: Container(
-        height: cellHeight,
-        margin: EdgeInsets.zero,
-        child: FittedBox(
-          fit: BoxFit.contain,
-          child: Text(
-            '${widget.number}',
-            style: TextStyle(
-              fontSize: 48,
-              color: color,
-              height: 1,
+        final color = Theme.of(context).colorScheme.primary;
+        final cellHeight = MediaQuery.of(context).size.height * 0.06;
+
+        return GestureDetector(
+          onTap: onTap,
+          child: Container(
+            height: cellHeight,
+            margin: EdgeInsets.zero,
+            child: FittedBox(
+              fit: BoxFit.contain,
+              child: Text(
+                '$number',
+                style: TextStyle(
+                  fontSize: 48,
+                  color: color,
+                  height: 1,
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

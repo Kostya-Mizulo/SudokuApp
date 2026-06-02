@@ -8,6 +8,8 @@ class SudokuCell extends StatelessWidget {
     super.key,
     required this.row,
     required this.col,
+    required this.insertedNumber,
+    required this.isGivenNumber,
     required this.isSelected,
     required this.isHighlighted,
     required this.onTap,
@@ -15,6 +17,8 @@ class SudokuCell extends StatelessWidget {
 
   final int row;
   final int col;
+  final int insertedNumber;
+  final bool isGivenNumber;
   final bool isSelected;
   final bool isHighlighted;
   final VoidCallback onTap;
@@ -51,6 +55,18 @@ class SudokuCell extends StatelessWidget {
               bottom: _bottomBorder(),
             ),
           ),
+          child: insertedNumber != 0
+              ? FittedBox(
+                  fit: BoxFit.contain,
+                  child: Text(
+                    '$insertedNumber',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 64,
+                    ),
+                  ),
+                )
+              : null,
         ),
       ),
     );

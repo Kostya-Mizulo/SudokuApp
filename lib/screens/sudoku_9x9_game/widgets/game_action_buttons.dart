@@ -94,30 +94,34 @@ class _ActionButton extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Icon(icon, color: color, size: size.width * 0.075),
-              if (badge != null)
-                Positioned(
-                  left: size.width * 0.053,
-                  bottom: -size.width * 0.011,
-                  child: badge!,
-                ),
-            ],
-          ),
-          SizedBox(height: size.height * 0.005),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontSize: size.width * 0.035,
+      child: Container(
+        padding: EdgeInsets.zero,
+        decoration: const BoxDecoration(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(icon, color: color, size: size.width * 0.075),
+                if (badge != null)
+                  Positioned(
+                    left: size.width * 0.053,
+                    bottom: -size.width * 0.011,
+                    child: badge!,
+                  ),
+              ],
             ),
-          ),
-        ],
+            SizedBox(height: size.height * 0.005),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: size.width * 0.035,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

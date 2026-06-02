@@ -26,23 +26,9 @@ class _Sudoku9x9GameScreenState extends State<Sudoku9x9GameScreen> {
 
   void _onCellTap(int row, int col) {
     setState(() {
-      if (_selectedRow == row && _selectedCol == col) {
-        _selectedRow = null;
-        _selectedCol = null;
-      } else {
-        _selectedRow = row;
-        _selectedCol = col;
-      }
+      _selectedRow = row;
+      _selectedCol = col;
     });
-  }
-
-  void _deselect() {
-    if (_selectedRow != null || _selectedCol != null) {
-      setState(() {
-        _selectedRow = null;
-        _selectedCol = null;
-      });
-    }
   }
 
   @override
@@ -63,10 +49,7 @@ class _Sudoku9x9GameScreenState extends State<Sudoku9x9GameScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: GestureDetector(
-        onTap: _deselect,
-        behavior: HitTestBehavior.translucent,
-        child: Column(
+      body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
@@ -107,7 +90,6 @@ class _Sudoku9x9GameScreenState extends State<Sudoku9x9GameScreen> {
             const NumberInputRow(),
           ],
         ),
-      ),
     );
   }
 }

@@ -4,8 +4,8 @@
 //      SudokuParser.getSudokuPuzzle (реальный rootBundle, как в рантайме);
 //   2) проверка, что объекты Cell корректно созданы и заполнены
 //      (realNumber ← solvedGrid, numberByStart ← puzzleGrid);
-//   3) создание объекта Sudoku и заполнение его стартовой сеткой;
-//   4) запуск логического решателя Sudoku.solveSudoku();
+//   3) создание объекта SudokuSolver и заполнение его стартовой сеткой;
+//   4) запуск логического решателя SudokuSolver.solveSudoku();
 //   5) проверка, что судоку валидно решён и совпал с эталоном из файла.
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sudokuapp/sudoku_logic/sudoku_logic.dart';
@@ -124,8 +124,8 @@ void main() {
     // ignore: avoid_print
     print('Стартовая сетка (puzzleGrid), показанная игроку:\n${renderGrid(puzzleGrid)}');
 
-    // ───────────── Шаг 2. Создаём объект Sudoku и заполняем его ─────────────
-    final sudoku = Sudoku(9);
+    // ───────────── Шаг 2. Создаём объект SudokuSolver и заполняем его ─────────────
+    final sudoku = SudokuSolver(9);
     sudoku.initiateSudokuMap(puzzleGrid);
 
     // После initiate каждая стартовая клетка должна стоять как insertedNumber.
@@ -161,7 +161,7 @@ void main() {
         reason: 'решение решателя должно совпасть с solvedGrid из файла');
 
     // ignore: avoid_print
-    print('=== Шаг 2-3. Решатель Sudoku.solveSudoku() отработал ===');
+    print('=== Шаг 2-3. Решатель SudokuSolver.solveSudoku() отработал ===');
     // ignore: avoid_print
     print('Решение решателя:\n${renderGrid(solvedByEngine)}');
     // ignore: avoid_print

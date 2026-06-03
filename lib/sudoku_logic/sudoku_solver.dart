@@ -18,8 +18,8 @@ class SudokuStuckException implements Exception {
 ///
 /// Порт `sudoku_grid/Sudoku.java`. Логика сохранена дословно; убраны лишь
 /// отладочные `System.out.println`, которые не влияли на алгоритм.
-class Sudoku {
-  Sudoku(this.sudokuSize)
+class SudokuSolver {
+  SudokuSolver(this.sudokuSize)
       : cells = List.generate(
           sudokuSize,
           (r) => List.generate(sudokuSize, (c) => Cell(r, c), growable: false),
@@ -651,7 +651,7 @@ class Sudoku {
     final strings = <int>[];
     for (var string = 0; string < sudokuSize; string++) {
       if (cells[string][column].getPredictedNumbers()!.contains(number)) {
-        strings.add(column);
+        strings.add(string);
       }
     }
     return strings;

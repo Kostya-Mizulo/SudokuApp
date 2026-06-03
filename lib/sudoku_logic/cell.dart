@@ -21,11 +21,18 @@ class Cell {
   bool isEmpty = false;
   bool isInsertedByStart = false;
 
+  // UI state
+  bool isSelected = false;
+  bool isHighlighted = false;
+
   void setRealNumber(int realNumber) => this.realNumber = realNumber;
 
   int getRealNumber() => realNumber;
 
-  void setInsertedNumber(int insertedNumber) => this.insertedNumber = insertedNumber;
+  void setInsertedNumber(int insertedNumber) {
+    this.insertedNumber = insertedNumber;
+    isEmpty = insertedNumber != 0;
+  }
 
   int getInsertedNumber() => insertedNumber;
 
@@ -45,10 +52,27 @@ class Cell {
 
   Set<int>? getPredictedNumbers() => predictedNumbers;
 
+  /// Устанавливает стартовое число ячейки и синхронизирует [insertedNumber]
+  /// с тем же значением (пустая ячейка = 0).
   void setNumberByStart(int numberByStart) {
     this.numberByStart = numberByStart;
-    insertedNumber = numberByStart;
+    setInsertedNumber(numberByStart);
+    isInsertedByStart = numberByStart != 0;
   }
 
   int getNumberByStart() => numberByStart;
+
+  void clearHighlight() {
+    isSelected = false;
+    isHighlighted = false;
+  }
+
+  Cell copySnapshot() {
+    final copy = Cell(row, column);
+    copy.insertedNumber = insertedNumber;
+    copy.isInsertedByStart = isInsertedByStart;
+    copy.isSelected = isSelected;
+    copy.isHighlighted = isHighlighted;
+    return copy;
+  }
 }

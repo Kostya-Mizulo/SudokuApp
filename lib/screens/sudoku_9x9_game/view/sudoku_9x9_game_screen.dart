@@ -1,113 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sudokuapp/sudoku_logic/sudoku_logic.dart';
 
+import '../bloc/bloc.dart';
 import '../widgets/widgets.dart';
 
-class Sudoku9x9GameScreen extends StatefulWidget {
+class Sudoku9x9GameScreen extends StatelessWidget {
   const Sudoku9x9GameScreen({super.key, required this.difficulty});
 
   final DifficultyLevel difficulty;
 
   @override
-  State<Sudoku9x9GameScreen> createState() => _Sudoku9x9GameScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => SudokuGameBloc()..add(SudokuGameStarted(difficulty)),
+      child: const _Sudoku9x9GameView(),
+    );
+  }
 }
 
-class _Sudoku9x9GameScreenState extends State<Sudoku9x9GameScreen> {
-  int? _selectedRow;
-  int? _selectedCol;
-
-  String get _difficultyLabel => switch (widget.difficulty) {
-        DifficultyLevel.easy => 'Лёгкий',
-        DifficultyLevel.medium => 'Средний',
-        DifficultyLevel.hard => 'Тяжёлый',
-        DifficultyLevel.master => 'Мастер',
-        DifficultyLevel.sixteen => '16 × 16',
-      };
-
-  void _onCellTap(int row, int col) {
-    setState(() {
-      if (_selectedRow == row && _selectedCol == col) {
-        _selectedRow = null;
-        _selectedCol = null;
-      } else {
-        _selectedRow = row;
-        _selectedCol = col;
-      }
-    });
-  }
-
-  void _deselect() {
-    if (_selectedRow != null || _selectedCol != null) {
-      setState(() {
-        _selectedRow = null;
-        _selectedCol = null;
-      });
-    }
-  }
+class _Sudoku9x9GameView extends StatelessWidget {
+  const _Sudoku9x9GameView();
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final screenWidth = screenSize.width;
-    final screenHeight = screenSize.height;
+    return BlocBuilder<SudokuGameBloc, SudokuGameState>(
+      builder: (context, state) {
+        if (state is! SudokuGameLoaded) return const Scaffold();
 
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: Icon(
-            Icons.chevron_left,
-            size: screenWidth * 0.096,
-            color: Theme.of(context).colorScheme.primary,
+        final screenSize = MediaQuery.of(context).size;
+        final screenWidth = screenSize.width;
+        final screenHeight = screenSize.height;
+
+        return Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            leading: IconButton(
+              icon: Icon(
+                Icons.chevron_left,
+                size: screenWidth * 0.096,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
           ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: GestureDetector(
-        onTap: _deselect,
-        behavior: HitTestBehavior.translucent,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: screenWidth * 0.064),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Уровень',
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.04,
-                      height: 1.1,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  Text(
-                    _difficultyLabel,
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.053,
-                      height: 1.1,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.025),
-            Center(
-              child: SudokuMap(
-                selectedRow: _selectedRow,
-                selectedCol: _selectedCol,
-                onCellTap: _onCellTap,
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.05),
-            const GameActionButtons(),
-            SizedBox(height: screenHeight * 0.04),
-            const NumberInputRow(),
-          ],
-        ),
-      ),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DifficultyLabel(),
+              SizedBox(height: screenHeight * 0.025),
+              const Center(child: SudokuMap()),
+              SizedBox(height: screenHeight * 0.05),
+              const GameActionButtons(),
+              SizedBox(height: screenHeight * 0.04),
+              const NumberInputRow(),
+            ],
+          ),
+        );
+      },
     );
   }
 }

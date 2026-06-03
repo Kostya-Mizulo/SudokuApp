@@ -55,7 +55,7 @@ void main() {
       [0, 0, 0, 0, 8, 0, 0, 7, 9],
     ];
 
-    final sudoku = Sudoku(9);
+    final sudoku = SudokuSolver(9);
     sudoku.initiateSudokuMap(puzzle);
     sudoku.solveSudoku();
 
@@ -76,7 +76,7 @@ void main() {
     // У полностью заполненной сетки таких нет, поэтому он «застревает» —
     // в Java это был NullPointerException, здесь это SudokuStuckException.
     final grid = SudokuCreator.generateSolvedGrid(SudokuSize.nine);
-    final sudoku = Sudoku(9);
+    final sudoku = SudokuSolver(9);
     sudoku.initiateSudokuMap(grid);
     expect(sudoku.solveSudoku, throwsA(isA<SudokuStuckException>()));
   });
@@ -86,7 +86,7 @@ void main() {
     final puzzle = SudokuCreator.removeNumbers(solved, DifficultyLevel.easy);
     expect(puzzle, isNotNull);
 
-    final sudoku = Sudoku(9);
+    final sudoku = SudokuSolver(9);
     sudoku.initiateSudokuMap(puzzle!);
     sudoku.solveSudoku();
     expect(sudoku.getSolvedGrid(), solved);

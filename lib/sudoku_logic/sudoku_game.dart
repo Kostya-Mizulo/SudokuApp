@@ -74,6 +74,18 @@ class SudokuGame {
         _cells[i][j].isHighlighted = true;
       }
     }
+
+    final selectedNumber = _cells[row][column].insertedNumber;
+    if (selectedNumber != 0) {
+      for (var i = 0; i < _sudokuSize; i++) {
+        for (var j = 0; j < _sudokuSize; j++) {
+          if (i == row && j == column) continue;
+          if (_cells[i][j].insertedNumber == selectedNumber) {
+            _cells[i][j].isInsertedNumberCurrentlyHighlighted = true;
+          }
+        }
+      }
+    }
   }
 
   void _clearAllHighlights() {
@@ -84,7 +96,42 @@ class SudokuGame {
     }
   }
 
+  void insertNumberInSelectedCell(int number) {
+    for (var i = 0; i < _sudokuSize; i++) {
+      for (var j = 0; j < _sudokuSize; j++) {
+        final cell = _cells[i][j];
+        if (!cell.isSelected) continue;
+
+        cell.insertNumberByUser(number);
+
+        if (cell.isCorrectNumberInserted == true) {
+          for (var r = 0; r < _sudokuSize; r++) {
+            for (var c = 0; c < _sudokuSize; c++) {
+              if (r == i && c == j) continue;
+              if (_cells[r][c].insertedNumber == number) {
+                _cells[r][c].isInsertedNumberCurrentlyHighlighted = true;
+              }
+            }
+          }
+          _updateNumberButtonVisibility(number);
+        }
+        return;
+      }
+    }
+  }
+
   void _clearCellHighlight(Cell cell) => cell.clearHighlight();
+
+  void _updateNumberButtonVisibility(int number) {
+    var count = 0;
+    for (var i = 0; i < _sudokuSize; i++) {
+      for (var j = 0; j < _sudokuSize; j++) {
+        final cell = _cells[i][j];
+        if (cell.insertedNumber == number && cell.realNumber == number) count++;
+      }
+    }
+    if (count == _sudokuSize) _numberButtonsVisibility[number] = false;
+  }
 
   List<List<int>> getSolvedGrid() {
     return List.generate(

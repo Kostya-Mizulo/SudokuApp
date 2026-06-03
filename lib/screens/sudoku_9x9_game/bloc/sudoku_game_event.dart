@@ -16,3 +16,9 @@ final class SudokuGameCellSelected extends SudokuGameEvent {
   final int row;
   final int column;
 }
+
+final class SudokuGameNumberInserted extends SudokuGameEvent {
+  SudokuGameNumberInserted(this.number);
+
+  final int number;
+}

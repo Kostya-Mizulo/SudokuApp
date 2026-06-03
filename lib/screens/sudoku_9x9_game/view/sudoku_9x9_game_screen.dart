@@ -53,7 +53,11 @@ class _Sudoku9x9GameView extends StatelessWidget {
               SizedBox(height: screenHeight * 0.05),
               const GameActionButtons(),
               SizedBox(height: screenHeight * 0.04),
-              const NumberInputRow(),
+              NumberInputRow(
+                onNumberTap: (number) => context
+                    .read<SudokuGameBloc>()
+                    .add(SudokuGameNumberInserted(number)),
+              ),
             ],
           ),
         );

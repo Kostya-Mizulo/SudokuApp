@@ -51,6 +51,7 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
   ) {
     if (_game == null) return;
     _game!.insertNumberInSelectedCell(event.number);
+    _trySaveIfResolved();
     emit(_snapshot());
   }
 

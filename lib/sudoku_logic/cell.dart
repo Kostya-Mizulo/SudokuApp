@@ -24,6 +24,8 @@ class Cell {
   // UI state
   bool isSelected = false;
   bool isHighlighted = false;
+  bool isInsertedNumberCurrentlyHighlighted = false;
+  bool? isCorrectNumberInserted;
 
   void setRealNumber(int realNumber) => this.realNumber = realNumber;
 
@@ -62,9 +64,18 @@ class Cell {
 
   int getNumberByStart() => numberByStart;
 
+  void insertNumberByUser(int number) {
+    if (insertedNumber != 0) return;
+    isCorrectNumberInserted = number == realNumber;
+    insertedNumber = number;
+    isEmpty = true;
+  }
+
   void clearHighlight() {
     isSelected = false;
     isHighlighted = false;
+    isInsertedNumberCurrentlyHighlighted = false;
+    isCorrectNumberInserted = null;
   }
 
   Cell copySnapshot() {
@@ -73,6 +84,8 @@ class Cell {
     copy.isInsertedByStart = isInsertedByStart;
     copy.isSelected = isSelected;
     copy.isHighlighted = isHighlighted;
+    copy.isInsertedNumberCurrentlyHighlighted = isInsertedNumberCurrentlyHighlighted;
+    copy.isCorrectNumberInserted = isCorrectNumberInserted;
     return copy;
   }
 }

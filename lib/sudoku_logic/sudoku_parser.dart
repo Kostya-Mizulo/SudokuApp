@@ -6,24 +6,24 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'cell.dart';
 import 'difficulty_level.dart';
 
-/// Сохраняет сгенерированные головоломки в JSON-файлы `puzzles/<difficulty>.json`.
+/// Сохраняет сгенерированные головоломки в JSON-файлы `resources/puzzles/<difficulty>.json`.
 ///
 /// Порт `sudoku_grid/SudokuParser.java`. Использует `dart:io`, поэтому работает
 /// на desktop/mobile, но не во Flutter Web. Это инструмент времени генерации,
 /// а не рантайма приложения (в приложении головоломки читаются из ассетов).
 class SudokuParser {
-  SudokuParser._();
+  const SudokuParser();
 
-  static const String _puzzlesDir = 'puzzles/';
+  static const String _puzzlesDir = 'resources/puzzles/';
 
   /// Путь к головоломкам как к ассетам приложения (см. `pubspec.yaml`).
   /// В отличие от [_puzzlesDir], читается через `rootBundle` в рантайме.
-  static const String _assetsDir = 'lib/puzzles/';
+  static const String _assetsDir = 'lib/resources/puzzles/';
 
   static const String _version = '01';
   static final RegExp _idPattern = RegExp(r'"id":\s*(\d+)');
 
-  /// Загружает из ассета `lib/puzzles/<difficulty>.json` первую головоломку
+  /// Загружает из ассета `lib/resources/puzzles/<difficulty>.json` первую головоломку
   /// заданного уровня сложности, у которой `isResolved == false` (решённые
   /// пропускаются), и возвращает её `id` вместе с сеткой [Cell].
   ///
@@ -31,7 +31,7 @@ class SudokuParser {
   /// (через [Cell.setNumberByStart]) — число из `puzzleGrid` (`0` = пусто).
   ///
   /// Бросает [StateError], если нерешённых головоломок не осталось.
-  static Future<({int id, List<List<Cell>> cells})> getSudokuPuzzle(
+  Future<({int id, List<List<Cell>> cells})> getSudokuPuzzle(
       DifficultyLevel difficulty) async {
     final assetPath = '$_assetsDir${difficulty.name.toLowerCase()}.json';
     final content = await rootBundle.loadString(assetPath);
@@ -72,6 +72,39 @@ class SudokuParser {
               ..setNumberByStart(puzzleGrid[row][column])
         ]
     ];
+  }
+
+  /// Помечает головоломку как решённую и обновляет счётчики в файле.
+  ///
+  /// Читает файл через `dart:io` (работает на desktop/mobile, но не во Flutter Web).
+  /// Находит запись по [id], выставляет `isResolved = true`,
+  /// `rateWhileResolved = rating`, инкрементирует `resolvedCount` и при
+  /// необходимости флажит `isAllResolved`.
+  void markPuzzleResolved(
+    int id,
+    DifficultyLevel difficulty, {
+    int? rating,
+  }) {
+    final filePath = '$_assetsDir${difficulty.name.toLowerCase()}.json';
+    final file = File(filePath);
+    final data = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+
+    final puzzles = (data['puzzles'] as List<dynamic>).cast<Map<String, dynamic>>();
+    final puzzle = puzzles.firstWhere(
+      (p) => p['id'] == id,
+      orElse: () => throw StateError('Puzzle id=$id not found in ${difficulty.name}.'),
+    );
+
+    puzzle['isResolved'] = true;
+    puzzle['rateWhileResolved'] = rating;
+
+    final resolvedCount = (data['resolvedCount'] as int) + 1;
+    data['resolvedCount'] = resolvedCount;
+    if (resolvedCount == data['totalCount'] as int) {
+      data['isAllResolved'] = true;
+    }
+
+    file.writeAsStringSync(const JsonEncoder.withIndent('  ').convert(data));
   }
 
   static void savePuzzle(List<List<int>> solvedGrid, List<List<int>> puzzleGrid,

@@ -2,21 +2,17 @@ import 'dart:math';
 
 import 'cell.dart';
 import 'difficulty_level.dart';
-import 'sudoku_parser.dart';
 
 class SudokuGame {
-  SudokuGame._(this._sudokuGridId, this._difficulty, List<List<Cell>> cells)
-      : _sudokuSize = cells.length,
+  SudokuGame.fromPuzzle(int id, DifficultyLevel difficulty, List<List<Cell>> cells)
+      : _sudokuGridId = id,
+        _difficulty = difficulty,
+        _sudokuSize = cells.length,
         _cells = cells,
         _stopwatchSolving = Stopwatch(),
         _numberButtonsVisibility = {
           for (var i = 1; i <= cells.length; i++) i: true,
         };
-
-  static Future<SudokuGame> fromDifficulty(DifficultyLevel difficulty) async {
-    final result = await SudokuParser.getSudokuPuzzle(difficulty);
-    return SudokuGame._(result.id, difficulty, result.cells);
-  }
 
   final int _sudokuGridId;
   DifficultyLevel _difficulty;

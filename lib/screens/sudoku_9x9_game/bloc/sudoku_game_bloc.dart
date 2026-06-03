@@ -1,17 +1,26 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sudokuapp/repositories/sudoku_repository.dart';
 import 'package:sudokuapp/sudoku_logic/sudoku_logic.dart';
 
 import 'sudoku_game_event.dart';
 import 'sudoku_game_state.dart';
 
 class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
-  SudokuGameBloc() : super(SudokuGameInitial()) {
+  SudokuGameBloc([this._repository = const SudokuRepository()]) : super(SudokuGameInitial()) {
     on<SudokuGameStarted>(_onGameStarted);
     on<SudokuGameNotesToggled>(_onNotesToggled);
     on<SudokuGameCellSelected>(_onCellSelected);
   }
 
+  final SudokuRepository _repository;
   SudokuGame? _game;
+
+  /// Вызывается после любого изменения состояния игры.
+  /// Если _isSudokuResolved только что стал true — сохраняет прогресс в файл.
+  void _trySaveIfResolved() {
+    if (_game == null || !_game!.isSudokuResolved) return;
+    _repository.savePuzzleResolved(_game!.sudokuGridId, _game!.difficulty);
+  }
 
   SudokuGameLoaded _snapshot() {
     final game = _game!;
@@ -50,7 +59,8 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
   ) async {
     emit(SudokuGameLoading());
     try {
-      _game = await SudokuGame.fromDifficulty(event.difficulty);
+      final puzzle = await _repository.getPuzzle(event.difficulty);
+      _game = SudokuGame.fromPuzzle(puzzle.id, event.difficulty, puzzle.cells);
       emit(_snapshot());
     } catch (e) {
       emit(SudokuGameError(e.toString()));

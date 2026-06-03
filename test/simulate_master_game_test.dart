@@ -1,6 +1,6 @@
 // Симуляция реального сценария: пользователь нажал «Начать игру» с уровнем
 // сложности MASTER. Тест проходит весь путь приложения:
-//   1) загрузка головоломки ИЗ ФАЙЛА  lib/puzzles/master.json через
+//   1) загрузка головоломки ИЗ ФАЙЛА  lib/resources/puzzles/master.json через
 //      SudokuParser.getSudokuPuzzle (реальный rootBundle, как в рантайме);
 //   2) проверка, что объекты Cell корректно созданы и заполнены
 //      (realNumber ← solvedGrid, numberByStart ← puzzleGrid);
@@ -60,14 +60,15 @@ String renderGrid(List<List<int>> grid) {
 
 void main() {
   // rootBundle.loadString требует инициализированного биндинга и читает
-  // ассеты, объявленные в pubspec.yaml (lib/puzzles/master.json).
+  // ассеты, объявленные в pubspec.yaml (lib/resources/puzzles/master.json).
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('СИМУЛЯЦИЯ: старт игры MASTER → загрузка из файла → решение решателем',
       () async {
     // ───────────── Шаг 1. Пользователь нажал «Начать игру» (MASTER) ─────────
     // Приложение запрашивает головоломку у парсера — тот читает её из ассета.
-    final cells = await SudokuParser.getSudokuPuzzle(DifficultyLevel.master);
+    final puzzle = await const SudokuParser().getSudokuPuzzle(DifficultyLevel.master);
+    final cells = puzzle.cells;
 
     // Сетка 9x9 из объектов Cell.
     expect(cells.length, 9, reason: 'MASTER — это 9x9');
@@ -117,7 +118,7 @@ void main() {
     }
 
     // ignore: avoid_print
-    print('\n=== Шаг 1. Головоломка MASTER загружена из lib/puzzles/master.json ===');
+    print('\n=== Шаг 1. Головоломка MASTER загружена из lib/resources/puzzles/master.json ===');
     // ignore: avoid_print
     print('Пустых клеток (0): $emptyCount  (диапазон MASTER: '
         '${DifficultyLevel.master.minEmptyCells}..${DifficultyLevel.master.maxEmptyCells})');

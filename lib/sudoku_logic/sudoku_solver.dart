@@ -651,7 +651,7 @@ class SudokuSolver {
     final strings = <int>[];
     for (var string = 0; string < sudokuSize; string++) {
       if (cells[string][column].getPredictedNumbers()!.contains(number)) {
-        strings.add(column);
+        strings.add(string);
       }
     }
     return strings;

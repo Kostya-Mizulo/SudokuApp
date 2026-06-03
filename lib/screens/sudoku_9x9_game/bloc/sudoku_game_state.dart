@@ -7,9 +7,17 @@ final class SudokuGameInitial extends SudokuGameState {}
 final class SudokuGameLoading extends SudokuGameState {}
 
 final class SudokuGameLoaded extends SudokuGameState {
-  SudokuGameLoaded(this.game);
+  SudokuGameLoaded({
+    required this.cells,
+    required this.difficultyLabel,
+    required this.isNotesActivated,
+    required this.numberButtonsVisibility,
+  });
 
-  final SudokuGame game;
+  final List<List<Cell>> cells;
+  final String difficultyLabel;
+  final bool isNotesActivated;
+  final Map<int, bool> numberButtonsVisibility;
 }
 
 final class SudokuGameError extends SudokuGameState {

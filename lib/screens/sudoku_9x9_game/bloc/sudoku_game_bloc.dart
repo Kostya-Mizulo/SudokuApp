@@ -11,24 +11,37 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     on<SudokuGameCellSelected>(_onCellSelected);
   }
 
+  SudokuGame? _game;
+
+  SudokuGameLoaded _snapshot() {
+    final game = _game!;
+    return SudokuGameLoaded(
+      cells: List.generate(
+        game.sudokuSize,
+        (r) => List.generate(game.sudokuSize, (c) => game.cells[r][c].copySnapshot()),
+      ),
+      difficultyLabel: game.difficultyLabel,
+      isNotesActivated: game.isNotesActivated,
+      numberButtonsVisibility: Map.from(game.numberButtonsVisibility),
+    );
+  }
+
   void _onCellSelected(
     SudokuGameCellSelected event,
     Emitter<SudokuGameState> emit,
   ) {
-    final current = state;
-    if (current is! SudokuGameLoaded) return;
-    current.game.markCellsViaUserCellSelection(event.row, event.column);
-    emit(SudokuGameLoaded(current.game));
+    if (_game == null) return;
+    _game!.markCellsViaUserCellSelection(event.row, event.column);
+    emit(_snapshot());
   }
 
   void _onNotesToggled(
     SudokuGameNotesToggled event,
     Emitter<SudokuGameState> emit,
   ) {
-    final current = state;
-    if (current is! SudokuGameLoaded) return;
-    current.game.isNotesActivated = !current.game.isNotesActivated;
-    emit(SudokuGameLoaded(current.game));
+    if (_game == null) return;
+    _game!.isNotesActivated = !_game!.isNotesActivated;
+    emit(_snapshot());
   }
 
   Future<void> _onGameStarted(
@@ -37,8 +50,8 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
   ) async {
     emit(SudokuGameLoading());
     try {
-      final game = await SudokuGame.fromDifficulty(event.difficulty);
-      emit(SudokuGameLoaded(game));
+      _game = await SudokuGame.fromDifficulty(event.difficulty);
+      emit(_snapshot());
     } catch (e) {
       emit(SudokuGameError(e.toString()));
     }

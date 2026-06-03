@@ -19,12 +19,12 @@ class NumberButton extends StatelessWidget {
       buildWhen: (prev, curr) {
         if (curr is! SudokuGameLoaded) return false;
         if (prev is! SudokuGameLoaded) return true;
-        return prev.game.numberButtonsVisibility[number] !=
-            curr.game.numberButtonsVisibility[number];
+        return prev.numberButtonsVisibility[number] !=
+            curr.numberButtonsVisibility[number];
       },
       builder: (context, state) {
         final isVisible = state is SudokuGameLoaded
-            ? (state.game.numberButtonsVisibility[number] ?? true)
+            ? (state.numberButtonsVisibility[number] ?? true)
             : true;
 
         if (!isVisible) return const SizedBox.shrink();

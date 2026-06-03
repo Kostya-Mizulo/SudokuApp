@@ -11,10 +11,14 @@ class GameActionButtons extends StatelessWidget {
     const grey = Color(0xFF616161);
 
     return BlocBuilder<SudokuGameBloc, SudokuGameState>(
-      buildWhen: (_, curr) => curr is SudokuGameLoaded,
+      buildWhen: (prev, curr) {
+        if (curr is! SudokuGameLoaded) return false;
+        if (prev is! SudokuGameLoaded) return true;
+        return prev.isNotesActivated != curr.isNotesActivated;
+      },
       builder: (context, state) {
         final notesEnabled =
-            state is SudokuGameLoaded ? state.game.isNotesActivated : false;
+            state is SudokuGameLoaded ? state.isNotesActivated : false;
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

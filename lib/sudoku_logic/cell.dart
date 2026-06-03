@@ -66,4 +66,13 @@ class Cell {
     isSelected = false;
     isHighlighted = false;
   }
+
+  Cell copySnapshot() {
+    final copy = Cell(row, column);
+    copy.insertedNumber = insertedNumber;
+    copy.isInsertedByStart = isInsertedByStart;
+    copy.isSelected = isSelected;
+    copy.isHighlighted = isHighlighted;
+    return copy;
+  }
 }

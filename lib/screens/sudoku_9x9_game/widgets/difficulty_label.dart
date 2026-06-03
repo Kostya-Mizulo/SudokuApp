@@ -12,8 +12,9 @@ class DifficultyLabel extends StatelessWidget {
     final color = Theme.of(context).colorScheme.primary;
 
     return BlocBuilder<SudokuGameBloc, SudokuGameState>(
+      buildWhen: (prev, curr) => curr is SudokuGameLoaded && prev is! SudokuGameLoaded,
       builder: (context, state) {
-        final label = state is SudokuGameLoaded ? state.game.difficultyLabel : '';
+        final label = state is SudokuGameLoaded ? state.difficultyLabel : '';
 
         return Padding(
           padding: EdgeInsets.only(left: screenWidth * 0.064),

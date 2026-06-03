@@ -24,34 +24,40 @@ class _Sudoku9x9GameView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final screenWidth = screenSize.width;
-    final screenHeight = screenSize.height;
+    return BlocBuilder<SudokuGameBloc, SudokuGameState>(
+      builder: (context, state) {
+        if (state is! SudokuGameLoaded) return const Scaffold();
 
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: Icon(
-            Icons.chevron_left,
-            size: screenWidth * 0.096,
-            color: Theme.of(context).colorScheme.primary,
+        final screenSize = MediaQuery.of(context).size;
+        final screenWidth = screenSize.width;
+        final screenHeight = screenSize.height;
+
+        return Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            leading: IconButton(
+              icon: Icon(
+                Icons.chevron_left,
+                size: screenWidth * 0.096,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
           ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const DifficultyLabel(),
-          SizedBox(height: screenHeight * 0.025),
-          const Center(child: SudokuMap()),
-          SizedBox(height: screenHeight * 0.05),
-          const GameActionButtons(),
-          SizedBox(height: screenHeight * 0.04),
-          const NumberInputRow(),
-        ],
-      ),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DifficultyLabel(),
+              SizedBox(height: screenHeight * 0.025),
+              const Center(child: SudokuMap()),
+              SizedBox(height: screenHeight * 0.05),
+              const GameActionButtons(),
+              SizedBox(height: screenHeight * 0.04),
+              const NumberInputRow(),
+            ],
+          ),
+        );
+      },
     );
   }
 }

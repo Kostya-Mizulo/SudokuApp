@@ -20,8 +20,9 @@ class SudokuMap extends StatelessWidget {
         border: Border.all(color: Colors.black, width: _kMapBorder),
       ),
       child: BlocBuilder<SudokuGameBloc, SudokuGameState>(
+        buildWhen: (_, curr) => curr is SudokuGameLoaded,
         builder: (context, state) {
-          final cells = state is SudokuGameLoaded ? state.game.cells : null;
+          final cells = state is SudokuGameLoaded ? state.cells : null;
           return Column(
             children: List.generate(
               9,

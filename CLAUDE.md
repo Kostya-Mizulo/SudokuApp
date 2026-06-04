@@ -97,7 +97,7 @@ A faithful Dart port of the Java `sudoku_grid` package (the original source live
 
 ### Puzzle JSON format
 
-Each file in `lib/puzzles/` shares this schema:
+Each file in `lib/resources/puzzles/` shares this schema:
 
 ```json
 {
@@ -124,7 +124,7 @@ Each file in `lib/puzzles/` shares this schema:
 - `puzzleGrid` — начальная сетка, `0` = пустая клетка
 - `rateWhileResolved` — оценка пользователя после решения, изначально `null`
 
-Загрузка: `rootBundle.loadString('lib/puzzles/easy.json')` (зарегистрированы в `pubspec.yaml`).
+Загрузка: `rootBundle.loadString('lib/resources/puzzles/easy.json')` (зарегистрированы в `pubspec.yaml`).
 
 ## Dependencies
 

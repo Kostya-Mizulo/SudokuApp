@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.3.0
   flutter_bloc: ^9.1.1
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
@@ -75,11 +76,11 @@ flutter:
   uses-material-design: true
 
   assets:
-    - lib/puzzles/easy.json
-    - lib/puzzles/medium.json
-    - lib/puzzles/hard.json
-    - lib/puzzles/master.json
-    - lib/puzzles/sixteen.json
+    - lib/resources/puzzles/easy.json
+    - lib/resources/puzzles/medium.json
+    - lib/resources/puzzles/hard.json
+    - lib/resources/puzzles/master.json
+    - lib/resources/puzzles/sixteen.json
     - lib/resources/images/sudoku_icon.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see

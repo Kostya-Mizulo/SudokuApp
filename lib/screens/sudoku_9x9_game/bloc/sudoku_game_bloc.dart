@@ -1,17 +1,25 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sudokuapp/repositories/sudoku_repository.dart';
 import 'package:sudokuapp/sudoku_logic/sudoku_logic.dart';
 
 import 'sudoku_game_event.dart';
 import 'sudoku_game_state.dart';
 
 class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
-  SudokuGameBloc() : super(SudokuGameInitial()) {
+  SudokuGameBloc([this._repository = const SudokuRepository()]) : super(SudokuGameInitial()) {
     on<SudokuGameStarted>(_onGameStarted);
     on<SudokuGameNotesToggled>(_onNotesToggled);
     on<SudokuGameCellSelected>(_onCellSelected);
+    on<SudokuGameNumberInserted>(_onNumberInserted);
   }
 
+  final SudokuRepository _repository;
   SudokuGame? _game;
+
+  Future<void> _trySaveIfResolved() async {
+    if (_game == null || !_game!.isSudokuResolved) return;
+    await _repository.savePuzzleResolved(_game!.sudokuGridId, _game!.difficulty);
+  }
 
   SudokuGameLoaded _snapshot() {
     final game = _game!;
@@ -35,6 +43,16 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     emit(_snapshot());
   }
 
+  Future<void> _onNumberInserted(
+    SudokuGameNumberInserted event,
+    Emitter<SudokuGameState> emit,
+  ) async {
+    if (_game == null) return;
+    _game!.insertNumberInSelectedCell(event.number);
+    emit(_snapshot());
+    await _trySaveIfResolved();
+  }
+
   void _onNotesToggled(
     SudokuGameNotesToggled event,
     Emitter<SudokuGameState> emit,
@@ -50,7 +68,8 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
   ) async {
     emit(SudokuGameLoading());
     try {
-      _game = await SudokuGame.fromDifficulty(event.difficulty);
+      final puzzle = await _repository.getPuzzle(event.difficulty);
+      _game = SudokuGame.fromPuzzle(puzzle.id, event.difficulty, puzzle.cells);
       emit(_snapshot());
     } catch (e) {
       emit(SudokuGameError(e.toString()));

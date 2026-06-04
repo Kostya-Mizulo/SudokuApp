@@ -1,78 +1,20 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/services.dart' show rootBundle;
-
-import 'cell.dart';
 import 'difficulty_level.dart';
 
-/// Сохраняет сгенерированные головоломки в JSON-файлы `puzzles/<difficulty>.json`.
+/// Сохраняет сгенерированные головоломки в JSON-файлы `resources/puzzles/<difficulty>.json`.
 ///
 /// Порт `sudoku_grid/SudokuParser.java`. Использует `dart:io`, поэтому работает
 /// на desktop/mobile, но не во Flutter Web. Это инструмент времени генерации,
-/// а не рантайма приложения (в приложении головоломки читаются из ассетов).
+/// а не рантайма приложения (в приложении головоломки читаются из рабочих копий
+/// через SudokuRepository + PuzzleStorageService).
 class SudokuParser {
-  SudokuParser._();
+  const SudokuParser();
 
-  static const String _puzzlesDir = 'puzzles/';
-
-  /// Путь к головоломкам как к ассетам приложения (см. `pubspec.yaml`).
-  /// В отличие от [_puzzlesDir], читается через `rootBundle` в рантайме.
-  static const String _assetsDir = 'lib/puzzles/';
+  static const String _puzzlesDir = 'resources/puzzles/';
 
   static const String _version = '01';
   static final RegExp _idPattern = RegExp(r'"id":\s*(\d+)');
-
-  /// Загружает из ассета `lib/puzzles/<difficulty>.json` первую головоломку
-  /// заданного уровня сложности, у которой `isResolved == false` (решённые
-  /// пропускаются), и возвращает её `id` вместе с сеткой [Cell].
-  ///
-  /// В каждой ячейке `realNumber` — число из `solvedGrid`, а `numberByStart`
-  /// (через [Cell.setNumberByStart]) — число из `puzzleGrid` (`0` = пусто).
-  ///
-  /// Бросает [StateError], если нерешённых головоломок не осталось.
-  static Future<({int id, List<List<Cell>> cells})> getSudokuPuzzle(
-      DifficultyLevel difficulty) async {
-    final assetPath = '$_assetsDir${difficulty.name.toLowerCase()}.json';
-    final content = await rootBundle.loadString(assetPath);
-    final data = jsonDecode(content) as Map<String, dynamic>;
-    final puzzles = data['puzzles'] as List<dynamic>;
-
-    final puzzle = puzzles
-        .cast<Map<String, dynamic>>()
-        .where((p) => p['isResolved'] == false)
-        .firstOrNull;
-
-    if (puzzle == null) {
-      throw StateError(
-          'Нет нерешённых головоломок для уровня ${difficulty.name}.');
-    }
-
-    final solvedGrid = (puzzle['solvedGrid'] as List<dynamic>)
-        .map((row) => (row as List<dynamic>).cast<int>())
-        .toList();
-    final puzzleGrid = (puzzle['puzzleGrid'] as List<dynamic>)
-        .map((row) => (row as List<dynamic>).cast<int>())
-        .toList();
-
-    return (
-      id: puzzle['id'] as int,
-      cells: _buildCells(solvedGrid, puzzleGrid),
-    );
-  }
-
-  static List<List<Cell>> _buildCells(
-      List<List<int>> solvedGrid, List<List<int>> puzzleGrid) {
-    return [
-      for (var row = 0; row < solvedGrid.length; row++)
-        [
-          for (var column = 0; column < solvedGrid[row].length; column++)
-            Cell(row, column)
-              ..setRealNumber(solvedGrid[row][column])
-              ..setNumberByStart(puzzleGrid[row][column])
-        ]
-    ];
-  }
 
   static void savePuzzle(List<List<int>> solvedGrid, List<List<int>> puzzleGrid,
       DifficultyLevel difficulty) {

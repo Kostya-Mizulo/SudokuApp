@@ -2,21 +2,17 @@ import 'dart:math';
 
 import 'cell.dart';
 import 'difficulty_level.dart';
-import 'sudoku_parser.dart';
 
 class SudokuGame {
-  SudokuGame._(this._sudokuGridId, this._difficulty, List<List<Cell>> cells)
-      : _sudokuSize = cells.length,
+  SudokuGame.fromPuzzle(int id, DifficultyLevel difficulty, List<List<Cell>> cells)
+      : _sudokuGridId = id,
+        _difficulty = difficulty,
+        _sudokuSize = cells.length,
         _cells = cells,
         _stopwatchSolving = Stopwatch(),
         _numberButtonsVisibility = {
           for (var i = 1; i <= cells.length; i++) i: true,
         };
-
-  static Future<SudokuGame> fromDifficulty(DifficultyLevel difficulty) async {
-    final result = await SudokuParser.getSudokuPuzzle(difficulty);
-    return SudokuGame._(result.id, difficulty, result.cells);
-  }
 
   final int _sudokuGridId;
   DifficultyLevel _difficulty;
@@ -74,6 +70,18 @@ class SudokuGame {
         _cells[i][j].isHighlighted = true;
       }
     }
+
+    final selectedNumber = _cells[row][column].insertedNumber;
+    if (selectedNumber != 0) {
+      for (var i = 0; i < _sudokuSize; i++) {
+        for (var j = 0; j < _sudokuSize; j++) {
+          if (i == row && j == column) continue;
+          if (_cells[i][j].insertedNumber == selectedNumber) {
+            _cells[i][j].isInsertedNumberCurrentlyHighlighted = true;
+          }
+        }
+      }
+    }
   }
 
   void _clearAllHighlights() {
@@ -84,7 +92,45 @@ class SudokuGame {
     }
   }
 
+  void insertNumberInSelectedCell(int number) {
+    for (var i = 0; i < _sudokuSize; i++) {
+      for (var j = 0; j < _sudokuSize; j++) {
+        final cell = _cells[i][j];
+        if (!cell.isSelected) continue;
+
+        cell.insertNumberByUser(number);
+
+        if (cell.isCorrectNumberInserted == true) {
+          for (var r = 0; r < _sudokuSize; r++) {
+            for (var c = 0; c < _sudokuSize; c++) {
+              if (r == i && c == j) continue;
+              if (_cells[r][c].insertedNumber == number) {
+                _cells[r][c].isInsertedNumberCurrentlyHighlighted = true;
+              }
+            }
+          }
+          _updateNumberButtonVisibility(number);
+          _isSudokuResolved = _cells.every(
+            (row) => row.every((c) => c.insertedNumber == c.realNumber),
+          );
+        }
+        return;
+      }
+    }
+  }
+
   void _clearCellHighlight(Cell cell) => cell.clearHighlight();
+
+  void _updateNumberButtonVisibility(int number) {
+    var count = 0;
+    for (var i = 0; i < _sudokuSize; i++) {
+      for (var j = 0; j < _sudokuSize; j++) {
+        final cell = _cells[i][j];
+        if (cell.insertedNumber == number && cell.realNumber == number) count++;
+      }
+    }
+    if (count == _sudokuSize) _numberButtonsVisibility[number] = false;
+  }
 
   List<List<int>> getSolvedGrid() {
     return List.generate(

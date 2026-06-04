@@ -12,6 +12,8 @@ class SudokuCell extends StatelessWidget {
     required this.isGivenNumber,
     required this.isSelected,
     required this.isHighlighted,
+    required this.isInsertedNumberCurrentlyHighlighted,
+    required this.isCorrectNumberInserted,
     required this.onTap,
   });
 
@@ -21,6 +23,8 @@ class SudokuCell extends StatelessWidget {
   final bool isGivenNumber;
   final bool isSelected;
   final bool isHighlighted;
+  final bool isInsertedNumberCurrentlyHighlighted;
+  final bool? isCorrectNumberInserted;
   final VoidCallback onTap;
 
   BorderSide _rightBorder() {
@@ -39,10 +43,12 @@ class SudokuCell extends StatelessWidget {
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
     final color = isSelected
-        ? primary.withValues(alpha: 0.35)
-        : isHighlighted
-            ? primary.withValues(alpha: 0.10)
-            : Theme.of(context).scaffoldBackgroundColor;
+        ? primary.withValues(alpha: 0.60)
+        : isInsertedNumberCurrentlyHighlighted
+            ? primary.withValues(alpha: 0.30)
+            : isHighlighted
+                ? primary.withValues(alpha: 0.10)
+                : Theme.of(context).scaffoldBackgroundColor;
 
     return Expanded(
       child: GestureDetector(
@@ -60,8 +66,12 @@ class SudokuCell extends StatelessWidget {
                   fit: BoxFit.contain,
                   child: Text(
                     '$insertedNumber',
-                    style: const TextStyle(
-                      color: Colors.black,
+                    style: TextStyle(
+                      color: isSelected && isCorrectNumberInserted == true
+                          ? Colors.indigo
+                          : isSelected && isCorrectNumberInserted == false
+                              ? Colors.red
+                              : Colors.black,
                       fontSize: 64,
                     ),
                   ),

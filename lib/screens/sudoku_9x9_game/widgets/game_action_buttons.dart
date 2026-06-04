@@ -27,7 +27,8 @@ class GameActionButtons extends StatelessWidget {
               icon: Icons.backspace_outlined,
               label: 'Очистить',
               color: grey,
-              onTap: () {},
+              onTap: () =>
+                  context.read<SudokuGameBloc>().add(SudokuGameCellCleared()),
             ),
             _ActionButton(
               icon: Icons.edit_outlined,

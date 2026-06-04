@@ -132,6 +132,25 @@ class SudokuGame {
     if (count == _sudokuSize) _numberButtonsVisibility[number] = false;
   }
 
+  void clearCellByClickClearButton() {
+    for (var i = 0; i < _sudokuSize; i++) {
+      for (var j = 0; j < _sudokuSize; j++) {
+        final cell = _cells[i][j];
+        if (!cell.isSelected) continue;
+
+        if (cell.isCorrectNumberInserted == false) {
+          cell.insertedNumber = 0;
+          cell.isCorrectNumberInserted = null;
+        } else if (cell.insertedNumber == 0 &&
+            cell.predictedNumbersByUser != null &&
+            cell.predictedNumbersByUser!.isNotEmpty) {
+          cell.predictedNumbersByUser!.clear();
+        }
+        return;
+      }
+    }
+  }
+
   List<List<int>> getSolvedGrid() {
     return List.generate(
       sudokuSize,

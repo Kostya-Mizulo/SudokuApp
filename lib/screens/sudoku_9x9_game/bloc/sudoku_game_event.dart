@@ -22,3 +22,5 @@ final class SudokuGameNumberInserted extends SudokuGameEvent {
 
   final int number;
 }
+
+final class SudokuGameCellCleared extends SudokuGameEvent {}

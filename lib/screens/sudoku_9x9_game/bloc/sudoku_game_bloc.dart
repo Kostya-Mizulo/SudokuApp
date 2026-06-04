@@ -11,6 +11,7 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     on<SudokuGameNotesToggled>(_onNotesToggled);
     on<SudokuGameCellSelected>(_onCellSelected);
     on<SudokuGameNumberInserted>(_onNumberInserted);
+    on<SudokuGameCellCleared>(_onCellCleared);
   }
 
   final SudokuRepository _repository;
@@ -48,9 +49,19 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     Emitter<SudokuGameState> emit,
   ) async {
     if (_game == null) return;
+    if (_game!.isNotesActivated) return;
     _game!.insertNumberInSelectedCell(event.number);
     emit(_snapshot());
     await _trySaveIfResolved();
+  }
+
+  void _onCellCleared(
+    SudokuGameCellCleared event,
+    Emitter<SudokuGameState> emit,
+  ) {
+    if (_game == null) return;
+    _game!.clearCellByClickClearButton();
+    emit(_snapshot());
   }
 
   void _onNotesToggled(

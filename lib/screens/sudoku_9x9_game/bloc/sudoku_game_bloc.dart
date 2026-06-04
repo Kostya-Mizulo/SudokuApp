@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sudokuapp/repositories/active_session_repository.dart';
 import 'package:sudokuapp/repositories/sudoku_repository.dart';
 import 'package:sudokuapp/sudoku_logic/sudoku_logic.dart';
 
@@ -6,20 +7,43 @@ import 'sudoku_game_event.dart';
 import 'sudoku_game_state.dart';
 
 class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
-  SudokuGameBloc([this._repository = const SudokuRepository()]) : super(SudokuGameInitial()) {
+  SudokuGameBloc({
+    SudokuRepository? sudokuRepository,
+    ActiveSessionRepository? activeSessionRepository,
+  })  : _repository = sudokuRepository ?? const SudokuRepository(),
+        _activeSessionRepository =
+            activeSessionRepository ?? const ActiveSessionRepository(),
+        super(SudokuGameInitial()) {
     on<SudokuGameStarted>(_onGameStarted);
+    on<SudokuGameResumed>(_onGameResumed);
     on<SudokuGameNotesToggled>(_onNotesToggled);
     on<SudokuGameCellSelected>(_onCellSelected);
     on<SudokuGameNumberInserted>(_onNumberInserted);
     on<SudokuGameCellCleared>(_onCellCleared);
+    on<SudokuGameSessionSaveRequested>(_onSessionSaveRequested);
   }
 
   final SudokuRepository _repository;
+  final ActiveSessionRepository _activeSessionRepository;
   SudokuGame? _game;
+
+  // Prevents double-save when the event fires and close() is called in sequence.
+  bool _sessionSaved = false;
 
   Future<void> _trySaveIfResolved() async {
     if (_game == null || !_game!.isSudokuResolved) return;
     await _repository.savePuzzleResolved(_game!.sudokuGridId, _game!.difficulty);
+    await _activeSessionRepository.clearSession();
+  }
+
+  Future<void> _saveActiveSession() async {
+    if (_game == null || _game!.isSudokuResolved || _sessionSaved) return;
+    _sessionSaved = true;
+    await _activeSessionRepository.saveSession(
+      id: _game!.sudokuGridId,
+      difficulty: _game!.difficulty,
+      cells: _game!.cells,
+    );
   }
 
   SudokuGameLoaded _snapshot() {
@@ -53,6 +77,7 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     _game!.insertNumberInSelectedCell(event.number);
     emit(_snapshot());
     await _trySaveIfResolved();
+    if (_game!.isSudokuResolved) emit(SudokuGameResolved());
   }
 
   void _onCellCleared(
@@ -73,6 +98,26 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     emit(_snapshot());
   }
 
+  Future<void> _onGameResumed(
+    SudokuGameResumed event,
+    Emitter<SudokuGameState> emit,
+  ) async {
+    emit(SudokuGameLoading());
+    try {
+      final session = await _activeSessionRepository.loadSession();
+      _game = SudokuGame.fromSession(
+        id: session.id,
+        difficulty: session.difficulty,
+        resolvedGrid: session.resolvedGrid,
+        initialGrid: session.initialGrid,
+        currentGrid: session.currentGrid,
+      );
+      emit(_snapshot());
+    } catch (e) {
+      emit(SudokuGameError(e.toString()));
+    }
+  }
+
   Future<void> _onGameStarted(
     SudokuGameStarted event,
     Emitter<SudokuGameState> emit,
@@ -85,5 +130,22 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     } catch (e) {
       emit(SudokuGameError(e.toString()));
     }
+  }
+
+  Future<void> saveSession() => _saveActiveSession();
+
+  Future<void> _onSessionSaveRequested(
+    SudokuGameSessionSaveRequested event,
+    Emitter<SudokuGameState> emit,
+  ) async {
+    await _saveActiveSession();
+  }
+
+  /// Fallback: saves the session when the BLoC is closed by BlocProvider
+  /// (e.g. programmatic navigation) without the event being fired first.
+  @override
+  Future<void> close() async {
+    await _saveActiveSession();
+    return super.close();
   }
 }

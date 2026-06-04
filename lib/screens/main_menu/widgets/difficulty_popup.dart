@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sudokuapp/sudoku_logic/sudoku_logic.dart';
-import 'package:sudokuapp/screens/screens.dart';
 
 const _levels = [
   ('Лёгкий', DifficultyLevel.easy),
@@ -13,8 +12,8 @@ const _levels = [
 class DifficultyPopup extends StatelessWidget {
   const DifficultyPopup({super.key});
 
-  static Future<void> show(BuildContext context) {
-    return showDialog<void>(
+  static Future<DifficultyLevel?> show(BuildContext context) {
+    return showDialog<DifficultyLevel?>(
       context: context,
       builder: (_) => const DifficultyPopup(),
     );
@@ -78,15 +77,7 @@ class _LevelItem extends StatelessWidget {
     return InkWell(
       onTap: difficulty == null
           ? null
-          : () {
-              Navigator.of(context).pop();
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) =>
-                      Sudoku9x9GameScreen(difficulty: difficulty!),
-                ),
-              );
-            },
+          : () => Navigator.of(context).pop(difficulty),
       child: Padding(
         padding: EdgeInsets.symmetric(
           vertical: size.height * 0.018,

@@ -24,3 +24,7 @@ final class SudokuGameNumberInserted extends SudokuGameEvent {
 }
 
 final class SudokuGameCellCleared extends SudokuGameEvent {}
+
+final class SudokuGameSessionSaveRequested extends SudokuGameEvent {}
+
+final class SudokuGameResumed extends SudokuGameEvent {}

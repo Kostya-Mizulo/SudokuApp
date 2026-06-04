@@ -10,9 +10,70 @@ class SudokuGame {
         _sudokuSize = cells.length,
         _cells = cells,
         _stopwatchSolving = Stopwatch(),
+        _isSudokuResolved = false,
+        _isNotesActivated = false,
         _numberButtonsVisibility = {
           for (var i = 1; i <= cells.length; i++) i: true,
         };
+
+  SudokuGame.fromSession({
+    required int id,
+    required DifficultyLevel difficulty,
+    required List<List<int>> resolvedGrid,
+    required List<List<int>> initialGrid,
+    required List<List<int>> currentGrid,
+  })  : _sudokuGridId = id,
+        _difficulty = difficulty,
+        _sudokuSize = resolvedGrid.length,
+        _cells = _buildSessionCells(resolvedGrid, initialGrid, currentGrid),
+        _stopwatchSolving = Stopwatch(),
+        _isSudokuResolved = false,
+        _isNotesActivated = false,
+        _numberButtonsVisibility =
+            _buildSessionButtonVisibility(resolvedGrid, currentGrid);
+
+  static List<List<Cell>> _buildSessionCells(
+    List<List<int>> resolvedGrid,
+    List<List<int>> initialGrid,
+    List<List<int>> currentGrid,
+  ) {
+    final size = resolvedGrid.length;
+    return [
+      for (var r = 0; r < size; r++)
+        [
+          for (var c = 0; c < size; c++)
+            () {
+              final cell = Cell(r, c)
+                ..setRealNumber(resolvedGrid[r][c])
+                ..setNumberByStart(initialGrid[r][c]);
+              final current = currentGrid[r][c];
+              if (!cell.isInsertedByStart && current != 0) {
+                cell.setInsertedNumber(current);
+                cell.isCorrectNumberInserted = current == resolvedGrid[r][c];
+              }
+              return cell;
+            }(),
+        ]
+    ];
+  }
+
+  static Map<int, bool> _buildSessionButtonVisibility(
+    List<List<int>> resolvedGrid,
+    List<List<int>> currentGrid,
+  ) {
+    final size = resolvedGrid.length;
+    final visibility = {for (var i = 1; i <= size; i++) i: true};
+    for (var n = 1; n <= size; n++) {
+      var count = 0;
+      for (var r = 0; r < size; r++) {
+        for (var c = 0; c < size; c++) {
+          if (currentGrid[r][c] == n && resolvedGrid[r][c] == n) count++;
+        }
+      }
+      if (count == size) visibility[n] = false;
+    }
+    return visibility;
+  }
 
   final int _sudokuGridId;
   DifficultyLevel _difficulty;

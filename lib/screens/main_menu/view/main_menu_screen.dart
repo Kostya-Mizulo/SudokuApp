@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../repositories/active_session_repository.dart';
+import '../../sudoku_9x9_game/view/view.dart';
 import '../../user_menu/view/view.dart';
 import '../widgets/widgets.dart';
 
@@ -14,15 +16,49 @@ class MainMenuScreen extends StatefulWidget {
 }
 
 class _MainMenuScreenState extends State<MainMenuScreen> {
+  static const _repository = ActiveSessionRepository();
+
   /// Индекс выбранной вкладки нижней панели: 0 — «Главная», 1 — «Я».
   int _selectedIndex = 0;
+  bool _hasActiveSession = false;
 
   static const _titles = ['Главная', 'Я'];
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshSessionState();
+  }
+
+  Future<void> _refreshSessionState() async {
+    final has = await _repository.hasSession();
+    if (mounted) setState(() => _hasActiveSession = has);
+  }
 
   void _onTabSelected(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  Future<void> _onNewGamePressed() async {
+    final difficulty = await DifficultyPopup.show(context);
+    if (difficulty == null || !mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => Sudoku9x9GameScreen(difficulty: difficulty),
+      ),
+    );
+    if (mounted) _refreshSessionState();
+  }
+
+  Future<void> _onContinuePressed() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const Sudoku9x9GameScreen.resume(),
+      ),
+    );
+    if (mounted) _refreshSessionState();
   }
 
   @override
@@ -59,8 +95,15 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: size.height * 0.06),
-                child: NewGameButton(
-                  onPressed: () => DifficultyPopup.show(context),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_hasActiveSession) ...[
+                      ContinueGameButton(onPressed: _onContinuePressed),
+                      SizedBox(height: size.height * 0.02),
+                    ],
+                    NewGameButton(onPressed: _onNewGamePressed),
+                  ],
                 ),
               ),
             ],

@@ -25,3 +25,5 @@ final class SudokuGameError extends SudokuGameState {
 
   final String message;
 }
+
+final class SudokuGameResolved extends SudokuGameState {}

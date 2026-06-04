@@ -110,6 +110,9 @@ class SudokuGame {
             }
           }
           _updateNumberButtonVisibility(number);
+          _isSudokuResolved = _cells.every(
+            (row) => row.every((c) => c.insertedNumber == c.realNumber),
+          );
         }
         return;
       }

@@ -1,13 +1,12 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import 'repositories/puzzle_storage_service.dart';
 import 'screens/screens.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Полноэкранный режим: прячем системные кнопки (назад/дом/последние).
-  // По свайпу снизу они показываются полупрозрачным оверлеем и сами
-  // скрываются через несколько секунд (immersiveSticky).
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  await PuzzleStorageService.initialize();
   runApp(const MyApp());
 }

@@ -16,11 +16,9 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
   final SudokuRepository _repository;
   SudokuGame? _game;
 
-  /// Вызывается после любого изменения состояния игры.
-  /// Если _isSudokuResolved только что стал true — сохраняет прогресс в файл.
-  void _trySaveIfResolved() {
+  Future<void> _trySaveIfResolved() async {
     if (_game == null || !_game!.isSudokuResolved) return;
-    _repository.savePuzzleResolved(_game!.sudokuGridId, _game!.difficulty);
+    await _repository.savePuzzleResolved(_game!.sudokuGridId, _game!.difficulty);
   }
 
   SudokuGameLoaded _snapshot() {
@@ -45,14 +43,14 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     emit(_snapshot());
   }
 
-  void _onNumberInserted(
+  Future<void> _onNumberInserted(
     SudokuGameNumberInserted event,
     Emitter<SudokuGameState> emit,
-  ) {
+  ) async {
     if (_game == null) return;
     _game!.insertNumberInSelectedCell(event.number);
-    _trySaveIfResolved();
     emit(_snapshot());
+    await _trySaveIfResolved();
   }
 
   void _onNotesToggled(

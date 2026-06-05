@@ -67,10 +67,10 @@ class SudokuCell extends StatelessWidget {
                   child: Text(
                     '$insertedNumber',
                     style: TextStyle(
-                      color: isSelected && isCorrectNumberInserted == true
-                          ? Colors.indigo
-                          : isSelected && isCorrectNumberInserted == false
-                              ? Colors.red
+                      color: isCorrectNumberInserted == false
+                          ? Colors.red
+                          : isSelected && isCorrectNumberInserted == true
+                              ? Colors.indigo
                               : Colors.black,
                       fontSize: 64,
                     ),

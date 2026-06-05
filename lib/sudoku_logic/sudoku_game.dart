@@ -9,12 +9,9 @@ class SudokuGame {
         _difficulty = difficulty,
         _sudokuSize = cells.length,
         _cells = cells,
-        _stopwatchSolving = Stopwatch(),
         _isSudokuResolved = false,
         _isNotesActivated = false,
-        _numberButtonsVisibility = {
-          for (var i = 1; i <= cells.length; i++) i: true,
-        };
+        _numberButtonsVisibility = _buildInitialButtonVisibility(cells);
 
   SudokuGame.fromSession({
     required int id,
@@ -26,11 +23,25 @@ class SudokuGame {
         _difficulty = difficulty,
         _sudokuSize = resolvedGrid.length,
         _cells = _buildSessionCells(resolvedGrid, initialGrid, currentGrid),
-        _stopwatchSolving = Stopwatch(),
         _isSudokuResolved = false,
         _isNotesActivated = false,
         _numberButtonsVisibility =
             _buildSessionButtonVisibility(resolvedGrid, currentGrid);
+
+  static Map<int, bool> _buildInitialButtonVisibility(List<List<Cell>> cells) {
+    final size = cells.length;
+    final visibility = {for (var i = 1; i <= size; i++) i: true};
+    for (var n = 1; n <= size; n++) {
+      var count = 0;
+      for (var r = 0; r < size; r++) {
+        for (var c = 0; c < size; c++) {
+          if (cells[r][c].insertedNumber == n) count++;
+        }
+      }
+      if (count == size) visibility[n] = false;
+    }
+    return visibility;
+  }
 
   static List<List<Cell>> _buildSessionCells(
     List<List<int>> resolvedGrid,
@@ -49,7 +60,9 @@ class SudokuGame {
               final current = currentGrid[r][c];
               if (!cell.isInsertedByStart && current != 0) {
                 cell.setInsertedNumber(current);
-                cell.isCorrectNumberInserted = current == resolvedGrid[r][c];
+              }
+              if (cell.insertedNumber != 0) {
+                cell.isCorrectNumberInserted = cell.insertedNumber == resolvedGrid[r][c];
               }
               return cell;
             }(),
@@ -78,7 +91,6 @@ class SudokuGame {
   final int _sudokuGridId;
   DifficultyLevel _difficulty;
   int _sudokuSize;
-  Stopwatch _stopwatchSolving;
   Map<int, bool> _numberButtonsVisibility;
   bool _isSudokuResolved = false;
   bool _isNotesActivated = false;
@@ -94,7 +106,6 @@ class SudokuGame {
         DifficultyLevel.sixteen => '16 × 16',
       };
   int get sudokuSize => _sudokuSize;
-  Stopwatch get stopwatchSolving => _stopwatchSolving;
   Map<int, bool> get numberButtonsVisibility => _numberButtonsVisibility;
   bool get isSudokuResolved => _isSudokuResolved;
   bool get isNotesActivated => _isNotesActivated;
@@ -102,7 +113,6 @@ class SudokuGame {
 
   set difficulty(DifficultyLevel value) => _difficulty = value;
   set sudokuSize(int value) => _sudokuSize = value;
-  set stopwatchSolving(Stopwatch value) => _stopwatchSolving = value;
   set numberButtonsVisibility(Map<int, bool> value) => _numberButtonsVisibility = value;
   set isSudokuResolved(bool value) => _isSudokuResolved = value;
   set isNotesActivated(bool value) => _isNotesActivated = value;

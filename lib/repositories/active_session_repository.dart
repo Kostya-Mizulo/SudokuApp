@@ -28,6 +28,7 @@ class ActiveSessionRepository {
     required int id,
     required DifficultyLevel difficulty,
     required List<List<Cell>> cells,
+    required int elapsedSeconds,
   }) async {
     final resolvedGrid = [
       for (final row in cells) [for (final cell in row) cell.realNumber],
@@ -43,7 +44,7 @@ class ActiveSessionRepository {
       'id': id,
       'difficulty': difficulty.name.toUpperCase(),
       'rating': null,
-      'elapsedSeconds': null,
+      'elapsedSeconds': elapsedSeconds,
       'resolvedGrid': resolvedGrid,
       'initialGrid': initialGrid,
       'currentGrid': currentGrid,
@@ -65,6 +66,7 @@ class ActiveSessionRepository {
         List<List<int>> resolvedGrid,
         List<List<int>> initialGrid,
         List<List<int>> currentGrid,
+        int elapsedSeconds,
       })> loadSession() async {
     final file = await ActiveSessionStorageService.getFile();
     final data = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
@@ -82,6 +84,7 @@ class ActiveSessionRepository {
     final currentGrid = (data['currentGrid'] as List)
         .map((row) => (row as List).cast<int>())
         .toList();
+    final elapsedSeconds = (data['elapsedSeconds'] as int?) ?? 0;
 
     return (
       id: id,
@@ -89,6 +92,7 @@ class ActiveSessionRepository {
       resolvedGrid: resolvedGrid,
       initialGrid: initialGrid,
       currentGrid: currentGrid,
+      elapsedSeconds: elapsedSeconds,
     );
   }
 

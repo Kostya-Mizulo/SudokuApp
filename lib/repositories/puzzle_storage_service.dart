@@ -17,11 +17,16 @@ class PuzzleStorageService {
   static Future<void> initialize() async {
     final dir = await _puzzlesDir();
     for (final difficulty in DifficultyLevel.values) {
-      final file = _fileIn(dir, difficulty);
-      if (!file.existsSync()) {
-        final content =
-            await rootBundle.loadString('$_assetsDir${_fileName(difficulty)}');
-        file.writeAsStringSync(content);
+      try {
+        await _copyIfAbsent(dir, difficulty);
+      } catch (_) {
+        // Атомарное копирование не удалось — пишем напрямую, если файл всё ещё отсутствует.
+        final target = _fileIn(dir, difficulty);
+        if (!await target.exists()) {
+          final content =
+              await rootBundle.loadString('$_assetsDir${_fileName(difficulty)}');
+          await target.writeAsString(content);
+        }
       }
     }
   }
@@ -31,10 +36,27 @@ class PuzzleStorageService {
     return _fileIn(dir, difficulty);
   }
 
+  /// Копирует файл из ассетов в [dir], если он там ещё не существует.
+  ///
+  /// Использует временный файл и атомарное переименование, чтобы
+  /// частично записанный файл не остался при внезапном завершении приложения.
+  static Future<void> _copyIfAbsent(
+      Directory dir, DifficultyLevel difficulty) async {
+    final target = _fileIn(dir, difficulty);
+    if (await target.exists()) return;
+
+    final content =
+        await rootBundle.loadString('$_assetsDir${_fileName(difficulty)}');
+
+    final tmp = File('${target.path}.tmp');
+    await tmp.writeAsString(content);
+    await tmp.rename(target.path);
+  }
+
   static Future<Directory> _puzzlesDir() async {
     final appDir = await getApplicationDocumentsDirectory();
     final dir = Directory('${appDir.path}/$_subDir');
-    if (!dir.existsSync()) dir.createSync(recursive: true);
+    if (!dir.existsSync()) await dir.create(recursive: true);
     return dir;
   }
 

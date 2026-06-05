@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sudokuapp/sudoku_logic/sudoku_logic.dart';
@@ -41,16 +43,22 @@ class _Sudoku9x9GameView extends StatefulWidget {
 class _Sudoku9x9GameViewState extends State<_Sudoku9x9GameView>
     with WidgetsBindingObserver {
   late final SudokuGameBloc _bloc;
+  Timer? _ticker;
 
   @override
   void initState() {
     super.initState();
     _bloc = context.read<SudokuGameBloc>();
     WidgetsBinding.instance.addObserver(this);
+    _ticker = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) => _bloc.add(SudokuGameTimerTicked()),
+    );
   }
 
   @override
   void dispose() {
+    _ticker?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -72,8 +80,11 @@ class _Sudoku9x9GameViewState extends State<_Sudoku9x9GameView>
     return BlocListener<SudokuGameBloc, SudokuGameState>(
       listener: (context, state) {
         if (state is SudokuGameResolved) {
+          _ticker?.cancel();
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const WinScreen()),
+            MaterialPageRoute(
+              builder: (_) => WinScreen(elapsedTime: state.elapsedTime),
+            ),
           );
         }
       },
@@ -106,7 +117,16 @@ class _Sudoku9x9GameViewState extends State<_Sudoku9x9GameView>
               body: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const DifficultyLabel(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.15),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        DifficultyLabel(),
+                        StopwatchDisplay(),
+                      ],
+                    ),
+                  ),
                   SizedBox(height: screenHeight * 0.025),
                   const Center(child: SudokuMap()),
                   SizedBox(height: screenHeight * 0.05),

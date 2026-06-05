@@ -21,18 +21,30 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     on<SudokuGameNumberInserted>(_onNumberInserted);
     on<SudokuGameCellCleared>(_onCellCleared);
     on<SudokuGameSessionSaveRequested>(_onSessionSaveRequested);
+    on<SudokuGameTimerTicked>(_onTimerTicked);
   }
 
   final SudokuRepository _repository;
   final ActiveSessionRepository _activeSessionRepository;
   SudokuGame? _game;
+  int _elapsedSeconds = 0;
 
   // Prevents double-save when the event fires and close() is called in sequence.
   bool _sessionSaved = false;
 
+  static String _formatElapsed(int totalSeconds) {
+    final mm = (totalSeconds ~/ 60).toString().padLeft(2, '0');
+    final ss = (totalSeconds % 60).toString().padLeft(2, '0');
+    return '$mm:$ss';
+  }
+
   Future<void> _trySaveIfResolved() async {
     if (_game == null || !_game!.isSudokuResolved) return;
-    await _repository.savePuzzleResolved(_game!.sudokuGridId, _game!.difficulty);
+    await _repository.savePuzzleResolved(
+      _game!.sudokuGridId,
+      _game!.difficulty,
+      timeSeconds: _elapsedSeconds,
+    );
     await _activeSessionRepository.clearSession();
   }
 
@@ -43,6 +55,7 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
       id: _game!.sudokuGridId,
       difficulty: _game!.difficulty,
       cells: _game!.cells,
+      elapsedSeconds: _elapsedSeconds,
     );
   }
 
@@ -56,7 +69,18 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
       difficultyLabel: game.difficultyLabel,
       isNotesActivated: game.isNotesActivated,
       numberButtonsVisibility: Map.from(game.numberButtonsVisibility),
+      elapsedTime: _formatElapsed(_elapsedSeconds),
     );
+  }
+
+  void _onTimerTicked(
+    SudokuGameTimerTicked event,
+    Emitter<SudokuGameState> emit,
+  ) {
+    final current = state;
+    if (current is! SudokuGameLoaded || _game == null) return;
+    _elapsedSeconds++;
+    emit(current.copyWith(elapsedTime: _formatElapsed(_elapsedSeconds)));
   }
 
   void _onCellSelected(
@@ -77,7 +101,7 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     _game!.insertNumberInSelectedCell(event.number);
     emit(_snapshot());
     await _trySaveIfResolved();
-    if (_game!.isSudokuResolved) emit(SudokuGameResolved());
+    if (_game!.isSudokuResolved) emit(SudokuGameResolved(_formatElapsed(_elapsedSeconds)));
   }
 
   void _onCellCleared(
@@ -105,6 +129,7 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     emit(SudokuGameLoading());
     try {
       final session = await _activeSessionRepository.loadSession();
+      _elapsedSeconds = session.elapsedSeconds;
       _game = SudokuGame.fromSession(
         id: session.id,
         difficulty: session.difficulty,
@@ -125,6 +150,7 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     emit(SudokuGameLoading());
     try {
       final puzzle = await _repository.getPuzzle(event.difficulty);
+      _elapsedSeconds = 0;
       _game = SudokuGame.fromPuzzle(puzzle.id, event.difficulty, puzzle.cells);
       emit(_snapshot());
     } catch (e) {

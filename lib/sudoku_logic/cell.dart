@@ -75,7 +75,6 @@ class Cell {
     isSelected = false;
     isHighlighted = false;
     isInsertedNumberCurrentlyHighlighted = false;
-    isCorrectNumberInserted = null;
   }
 
   Cell copySnapshot() {

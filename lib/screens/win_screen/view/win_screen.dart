@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../widgets/widgets.dart';
 
 class WinScreen extends StatelessWidget {
-  const WinScreen({super.key});
+  const WinScreen({super.key, required this.elapsedTime});
+
+  final String elapsedTime;
 
   @override
   Widget build(BuildContext context) {
@@ -15,14 +17,27 @@ class WinScreen extends StatelessWidget {
         children: [
           Align(
             alignment: const Alignment(0, -0.3),
-            child: Text(
-              'Судоку\nуспешно разгадан!',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontSize: 28,
-                fontWeight: FontWeight.w600,
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Судоку\nуспешно разгадан!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Время: $elapsedTime',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 20,
+                  ),
+                ),
+              ],
             ),
           ),
           Align(

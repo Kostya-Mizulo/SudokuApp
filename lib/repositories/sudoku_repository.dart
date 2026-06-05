@@ -39,6 +39,7 @@ class SudokuRepository {
     int id,
     DifficultyLevel difficulty, {
     int? rating,
+    int? timeSeconds,
   }) async {
     final file = await PuzzleStorageService.getFile(difficulty);
     final data = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
@@ -49,6 +50,7 @@ class SudokuRepository {
       if (puzzle['id'] == id) {
         puzzle['isResolved'] = true;
         if (rating != null) puzzle['rateWhileResolved'] = rating;
+        if (timeSeconds != null) puzzle['timeSeconds'] = timeSeconds;
         break;
       }
     }

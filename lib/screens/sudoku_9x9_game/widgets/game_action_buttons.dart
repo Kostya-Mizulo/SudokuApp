@@ -42,7 +42,8 @@ class GameActionButtons extends StatelessWidget {
               icon: Icons.tips_and_updates_outlined,
               label: 'Подсказка',
               color: grey,
-              onTap: () {},
+              onTap: () =>
+                  context.read<SudokuGameBloc>().add(SudokuGameHintRequested()),
             ),
           ],
         );

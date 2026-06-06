@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../repositories/active_session_repository.dart';
 import '../../sudoku_9x9_game/view/view.dart';
-import '../../user_menu/view/view.dart';
 import '../widgets/widgets.dart';
 
 class MainMenuScreen extends StatefulWidget {
@@ -18,11 +17,7 @@ class MainMenuScreen extends StatefulWidget {
 class _MainMenuScreenState extends State<MainMenuScreen> {
   static const _repository = ActiveSessionRepository();
 
-  /// Индекс выбранной вкладки нижней панели: 0 — «Главная», 1 — «Я».
-  int _selectedIndex = 0;
   bool _hasActiveSession = false;
-
-  static const _titles = ['Главная', 'Я'];
 
   @override
   void initState() {
@@ -33,12 +28,6 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
   Future<void> _refreshSessionState() async {
     final has = await _repository.hasSession();
     if (mounted) setState(() => _hasActiveSession = has);
-  }
-
-  void _onTabSelected(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 
   Future<void> _onNewGamePressed() async {
@@ -73,47 +62,37 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
-          _titles[_selectedIndex],
+          'Главная',
           style: TextStyle(color: Theme.of(context).colorScheme.primary),
         ),
         centerTitle: true,
       ),
-      body: IndexedStack(
-        index: _selectedIndex,
+      body: Stack(
+        alignment: Alignment.bottomCenter,
         children: [
-          Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              const SizedBox.expand(),
-              Align(
-                alignment: const Alignment(0, -0.4),
-                child: SvgPicture.asset(
-                  'lib/resources/images/sudoku_icon.svg',
-                  width: size.width * 0.42,
-                  height: size.width * 0.42,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: size.height * 0.06),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (_hasActiveSession) ...[
-                      ContinueGameButton(onPressed: _onContinuePressed),
-                      SizedBox(height: size.height * 0.02),
-                    ],
-                    NewGameButton(onPressed: _onNewGamePressed),
-                  ],
-                ),
-              ),
-            ],
+          const SizedBox.expand(),
+          Align(
+            alignment: const Alignment(0, -0.4),
+            child: SvgPicture.asset(
+              'lib/resources/images/sudoku_icon.svg',
+              width: size.width * 0.42,
+              height: size.width * 0.42,
+            ),
           ),
-          const UserMenuBody(),
+          Padding(
+            padding: EdgeInsets.only(bottom: size.height * 0.06),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (_hasActiveSession) ...[
+                  ContinueGameButton(onPressed: _onContinuePressed),
+                  SizedBox(height: size.height * 0.02),
+                ],
+                NewGameButton(onPressed: _onNewGamePressed),
+              ],
+            ),
+          ),
         ],
-      ),
-      bottomNavigationBar: MainBottomBar(
-        currentIndex: _selectedIndex,
-        onTap: _onTabSelected,
       ),
     );
   }

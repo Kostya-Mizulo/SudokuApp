@@ -15,6 +15,7 @@ class SudokuCell extends StatelessWidget {
     required this.isInsertedNumberCurrentlyHighlighted,
     required this.isCorrectNumberInserted,
     required this.onTap,
+    this.predictedNumbersByUser,
   });
 
   final int row;
@@ -26,6 +27,7 @@ class SudokuCell extends StatelessWidget {
   final bool isInsertedNumberCurrentlyHighlighted;
   final bool? isCorrectNumberInserted;
   final VoidCallback onTap;
+  final Set<int>? predictedNumbersByUser;
 
   BorderSide _rightBorder() {
     if (col == 8) return BorderSide.none;
@@ -39,6 +41,37 @@ class SudokuCell extends StatelessWidget {
     return const BorderSide(color: Colors.grey, width: _kCellBorder);
   }
 
+  Widget _buildCandidates() {
+    return Column(
+      children: List.generate(3, (gridRow) {
+        return Expanded(
+          child: Row(
+            children: List.generate(3, (gridCol) {
+              final number = gridRow * 3 + gridCol + 1;
+              final visible = predictedNumbersByUser!.contains(number);
+              return Expanded(
+                child: Center(
+                  child: visible
+                      ? FittedBox(
+                          fit: BoxFit.contain,
+                          child: Text(
+                            '$number',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              );
+            }),
+          ),
+        );
+      }),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
@@ -49,6 +82,9 @@ class SudokuCell extends StatelessWidget {
             : isHighlighted
                 ? primary.withValues(alpha: 0.10)
                 : Theme.of(context).scaffoldBackgroundColor;
+
+    final hasCandidates =
+        predictedNumbersByUser != null && predictedNumbersByUser!.isNotEmpty;
 
     return Expanded(
       child: GestureDetector(
@@ -76,7 +112,9 @@ class SudokuCell extends StatelessWidget {
                     ),
                   ),
                 )
-              : null,
+              : hasCandidates
+                  ? _buildCandidates()
+                  : null,
         ),
       ),
     );

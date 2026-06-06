@@ -5,6 +5,8 @@ import 'sudoku_solver.dart';
 import 'sudoku_parser.dart';
 import 'sudoku_size.dart';
 
+class _SolverTimeout implements Exception {}
+
 /// Генератор судоку.
 ///
 /// Порт `sudoku_grid/SudokuCreator.java`. Отладочный вывод прогресса убран;
@@ -15,14 +17,33 @@ class SudokuCreator {
 
   static final Random _random = Random();
 
-  static void generate(SudokuSize size, DifficultyLevel difficulty, int count) {
+  // Таймаут на один паззл 16x16: если проверка уникальности превышает лимит,
+  // бросаем _SolverTimeout и берём свежую сетку.
+  static const int _timeoutMs = 60000;
+  static Stopwatch? _sw;
+
+  static void generate(
+    SudokuSize size,
+    DifficultyLevel difficulty,
+    int count, {
+    void Function(int generated)? onProgress,
+  }) {
     var generated = 0;
     while (generated < count) {
       final solvedGrid = generateSolvedGrid(size);
-      final puzzle = removeNumbers(solvedGrid, difficulty);
-      if (puzzle != null) {
-        SudokuParser.savePuzzle(solvedGrid, puzzle, difficulty);
-        generated++;
+      if (size == SudokuSize.sixteen) _sw = Stopwatch()..start();
+      try {
+        final puzzle = removeNumbers(solvedGrid, difficulty);
+        if (puzzle != null) {
+          SudokuParser.savePuzzle(solvedGrid, puzzle, difficulty);
+          generated++;
+          onProgress?.call(generated);
+        }
+      } on _SolverTimeout {
+        // Пропускаем — берём новую сетку.
+      } finally {
+        _sw?.stop();
+        _sw = null;
       }
     }
   }
@@ -144,6 +165,8 @@ class SudokuCreator {
   static int _countSolutionsFast(List<List<int>> grid, int n, int boxSize,
       int limit, List<int> rowMask, List<int> colMask, List<int> boxMask,
       int fullMask) {
+    if ((_sw?.elapsedMilliseconds ?? 0) > _timeoutMs) throw _SolverTimeout();
+
     var bestRow = -1;
     var bestCol = -1;
     var bestAvailable = 0;

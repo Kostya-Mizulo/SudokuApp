@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../repositories/active_session_repository.dart';
+import '../../../sudoku_logic/sudoku_logic.dart';
 import '../../sudoku_9x9_game/view/view.dart';
+import '../../sudoku_16x16_game/view/view.dart';
 import '../widgets/widgets.dart';
 
 class MainMenuScreen extends StatefulWidget {
@@ -35,16 +36,22 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
     if (difficulty == null || !mounted) return;
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => Sudoku9x9GameScreen(difficulty: difficulty),
+        builder: (_) => difficulty == DifficultyLevel.sixteen
+            ? Sudoku16x16GameScreen(difficulty: difficulty)
+            : Sudoku9x9GameScreen(difficulty: difficulty),
       ),
     );
     if (mounted) _refreshSessionState();
   }
 
   Future<void> _onContinuePressed() async {
+    final difficulty = await _repository.getSessionDifficulty();
+    if (!mounted) return;
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => const Sudoku9x9GameScreen.resume(),
+        builder: (_) => difficulty == DifficultyLevel.sixteen
+            ? const Sudoku16x16GameScreen.resume()
+            : const Sudoku9x9GameScreen.resume(),
       ),
     );
     if (mounted) _refreshSessionState();
@@ -73,10 +80,9 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
           const SizedBox.expand(),
           Align(
             alignment: const Alignment(0, -0.4),
-            child: SvgPicture.asset(
-              'lib/resources/images/sudoku_icon.svg',
-              width: size.width * 0.42,
-              height: size.width * 0.42,
+            child: Image.asset(
+              'lib/resources/images/sudoku_icon_wide.png',
+              width: size.width * 0.8,
             ),
           ),
           Padding(

@@ -35,8 +35,6 @@ class SudokuParser {
         '  "sudokuSize": $size,\n'
         '  "difficulty": "${difficulty.name.toUpperCase()}",\n'
         '  "totalCount": 0,\n'
-        '  "resolvedCount": 0,\n'
-        '  "isAllResolved": false,\n'
         '  "puzzles": []\n'
         '}';
     file.writeAsStringSync(initial);
@@ -61,8 +59,6 @@ class SudokuParser {
     return '    {\n'
         '$fi"id": $id,\n'
         '$fi"difficulty": "${difficulty.name.toUpperCase()}",\n'
-        '$fi"isResolved": false,\n'
-        '$fi"rateWhileResolved": null,\n'
         '$fi"solvedGrid": ${_gridToJson(solvedGrid)},\n'
         '$fi"puzzleGrid": ${_gridToJson(puzzleGrid)}\n'
         '    }';

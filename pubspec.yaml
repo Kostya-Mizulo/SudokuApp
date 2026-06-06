@@ -52,10 +52,10 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "ic_launcher"
   ios: true
-  image_path: "lib/resources/images/sudoku_icon_1024.png"
+  image_path: "lib/resources/images/sudoku_icon_logo.png"
   min_sdk_android: 21
   adaptive_icon_background: "#ffffff"
-  adaptive_icon_foreground: "lib/resources/images/sudoku_icon_1024.png"
+  adaptive_icon_foreground: "lib/resources/images/sudoku_icon_logo.png"
   web:
     generate: false
   windows:
@@ -81,6 +81,7 @@ flutter:
     - lib/resources/puzzles/master.json
     - lib/resources/puzzles/sixteen.json
     - lib/resources/images/sudoku_icon.svg
+    - lib/resources/images/sudoku_icon_wide.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

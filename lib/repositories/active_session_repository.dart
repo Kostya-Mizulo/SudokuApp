@@ -59,6 +59,15 @@ class ActiveSessionRepository {
     return file.existsSync() && file.lengthSync() > 0;
   }
 
+  Future<DifficultyLevel?> getSessionDifficulty() async {
+    final file = await ActiveSessionStorageService.getFile();
+    if (!file.existsSync() || file.lengthSync() == 0) return null;
+    final data = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+    return DifficultyLevel.values.firstWhere(
+      (d) => d.name.toUpperCase() == (data['difficulty'] as String),
+    );
+  }
+
   Future<
       ({
         int id,

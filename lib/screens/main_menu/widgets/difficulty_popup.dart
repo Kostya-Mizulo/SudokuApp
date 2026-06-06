@@ -6,7 +6,7 @@ const _levels = [
   ('Средний', DifficultyLevel.medium),
   ('Тяжёлый', DifficultyLevel.hard),
   ('Мастер', DifficultyLevel.master),
-  ('16 × 16', null),
+  ('16 × 16', DifficultyLevel.sixteen),
 ];
 
 class DifficultyPopup extends StatelessWidget {

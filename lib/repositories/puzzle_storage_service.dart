@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart' show rootBundle;
@@ -25,10 +26,23 @@ class PuzzleStorageService {
         if (!await target.exists()) {
           final content =
               await rootBundle.loadString('$_assetsDir${_fileName(difficulty)}');
-          await target.writeAsString(content);
+          await target.writeAsString(_enrichJson(content));
         }
       }
     }
+  }
+
+  /// Добавляет мутабельные поля прогресса к иммутабельному JSON из ассета.
+  static String _enrichJson(String assetContent) {
+    final data = jsonDecode(assetContent) as Map<String, dynamic>;
+    data['resolvedCount'] = 0;
+    data['isAllResolved'] = false;
+    final puzzles = (data['puzzles'] as List).cast<Map<String, dynamic>>();
+    for (final puzzle in puzzles) {
+      puzzle['isResolved'] = false;
+      puzzle['rateWhileResolved'] = null;
+    }
+    return jsonEncode(data);
   }
 
   static Future<File> getFile(DifficultyLevel difficulty) async {
@@ -49,7 +63,7 @@ class PuzzleStorageService {
         await rootBundle.loadString('$_assetsDir${_fileName(difficulty)}');
 
     final tmp = File('${target.path}.tmp');
-    await tmp.writeAsString(content);
+    await tmp.writeAsString(_enrichJson(content));
     await tmp.rename(target.path);
   }
 

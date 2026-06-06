@@ -85,6 +85,8 @@ class Cell {
     copy.isHighlighted = isHighlighted;
     copy.isInsertedNumberCurrentlyHighlighted = isInsertedNumberCurrentlyHighlighted;
     copy.isCorrectNumberInserted = isCorrectNumberInserted;
+    copy.predictedNumbersByUser =
+        predictedNumbersByUser != null ? Set<int>.from(predictedNumbersByUser!) : null;
     return copy;
   }
 }

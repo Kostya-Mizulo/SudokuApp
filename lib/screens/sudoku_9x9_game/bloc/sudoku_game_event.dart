@@ -30,3 +30,5 @@ final class SudokuGameSessionSaveRequested extends SudokuGameEvent {}
 final class SudokuGameResumed extends SudokuGameEvent {}
 
 final class SudokuGameTimerTicked extends SudokuGameEvent {}
+
+final class SudokuGameHintRequested extends SudokuGameEvent {}

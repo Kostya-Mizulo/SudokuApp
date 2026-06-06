@@ -41,6 +41,8 @@ class SudokuMap extends StatelessWidget {
                           cells?[row][col].isInsertedNumberCurrentlyHighlighted ?? false,
                       isCorrectNumberInserted:
                           cells?[row][col].isCorrectNumberInserted,
+                      predictedNumbersByUser:
+                          cells?[row][col].predictedNumbersByUser,
                       onTap: () => context
                           .read<SudokuGameBloc>()
                           .add(SudokuGameCellSelected(row, col)),

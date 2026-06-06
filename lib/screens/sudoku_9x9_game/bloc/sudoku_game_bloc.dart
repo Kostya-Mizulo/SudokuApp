@@ -22,6 +22,7 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     on<SudokuGameCellCleared>(_onCellCleared);
     on<SudokuGameSessionSaveRequested>(_onSessionSaveRequested);
     on<SudokuGameTimerTicked>(_onTimerTicked);
+    on<SudokuGameHintRequested>(_onHintRequested);
   }
 
   final SudokuRepository _repository;
@@ -97,7 +98,11 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     Emitter<SudokuGameState> emit,
   ) async {
     if (_game == null) return;
-    if (_game!.isNotesActivated) return;
+    if (_game!.isNotesActivated) {
+      _game!.togglePredictedNumberByUser(event.number);
+      emit(_snapshot());
+      return;
+    }
     _game!.insertNumberInSelectedCell(event.number);
     emit(_snapshot());
     await _trySaveIfResolved();
@@ -156,6 +161,17 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     } catch (e) {
       emit(SudokuGameError(e.toString()));
     }
+  }
+
+  Future<void> _onHintRequested(
+    SudokuGameHintRequested event,
+    Emitter<SudokuGameState> emit,
+  ) async {
+    if (_game == null || _game!.isSudokuResolved) return;
+    _game!.revealHintCell();
+    emit(_snapshot());
+    await _trySaveIfResolved();
+    if (_game!.isSudokuResolved) emit(SudokuGameResolved(_formatElapsed(_elapsedSeconds)));
   }
 
   Future<void> saveSession() => _saveActiveSession();

@@ -203,6 +203,21 @@ class SudokuGame {
     if (count == _sudokuSize) _numberButtonsVisibility[number] = false;
   }
 
+  void togglePredictedNumberByUser(int number) {
+    for (var i = 0; i < _sudokuSize; i++) {
+      for (var j = 0; j < _sudokuSize; j++) {
+        final cell = _cells[i][j];
+        if (!cell.isSelected) continue;
+        if (cell.insertedNumber != 0) return;
+        cell.predictedNumbersByUser ??= <int>{};
+        if (!cell.predictedNumbersByUser!.add(number)) {
+          cell.predictedNumbersByUser!.remove(number);
+        }
+        return;
+      }
+    }
+  }
+
   void clearCellByClickClearButton() {
     for (var i = 0; i < _sudokuSize; i++) {
       for (var j = 0; j < _sudokuSize; j++) {
@@ -220,6 +235,31 @@ class SudokuGame {
         return;
       }
     }
+  }
+
+  void revealHintCell() {
+    _clearAllHighlights();
+
+    final emptyCells = <(int, int)>[];
+    for (var r = 0; r < _sudokuSize; r++) {
+      for (var c = 0; c < _sudokuSize; c++) {
+        if (_cells[r][c].insertedNumber == 0) emptyCells.add((r, c));
+      }
+    }
+    if (emptyCells.isEmpty) return;
+
+    final idx = Random().nextInt(emptyCells.length);
+    final (row, col) = emptyCells[idx];
+    final cell = _cells[row][col];
+
+    cell.setInsertedNumber(cell.realNumber);
+    cell.isCorrectNumberInserted = true;
+    cell.isSelected = true;
+
+    _updateNumberButtonVisibility(cell.realNumber);
+    _isSudokuResolved = _cells.every(
+      (row) => row.every((c) => c.insertedNumber == c.realNumber),
+    );
   }
 
   List<List<int>> getSolvedGrid() {

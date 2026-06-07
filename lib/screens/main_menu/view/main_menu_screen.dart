@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../repositories/active_session_repository.dart';
 import '../../../sudoku_logic/sudoku_logic.dart';
+import '../../shared/screen_frame.dart';
 import '../../sudoku_9x9_game/view/view.dart';
 import '../../sudoku_16x16_game/view/view.dart';
 import '../widgets/widgets.dart';
@@ -61,19 +62,19 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        surfaceTintColor: Colors.transparent,
-        shadowColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text(
-          'Главная',
-          style: TextStyle(color: Theme.of(context).colorScheme.primary),
-        ),
-        centerTitle: true,
-      ),
+    return ScreenFrame(child: Scaffold(
+      // appBar: AppBar(
+      //   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      //   surfaceTintColor: Colors.transparent,
+      //   shadowColor: Colors.transparent,
+      //   elevation: 0,
+      //   scrolledUnderElevation: 0,
+      //   title: Text(
+      //     'Главная',
+      //     style: TextStyle(color: Theme.of(context).colorScheme.primary),
+      //   ),
+      //   centerTitle: true,
+      // ),
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
@@ -81,8 +82,8 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
           Align(
             alignment: const Alignment(0, -0.4),
             child: Image.asset(
-              'lib/resources/images/sudoku_icon_wide.png',
-              width: size.width * 0.8,
+              'lib/resources/images/logo_iphone.png',
+              width: size.width * 0.55,
             ),
           ),
           Padding(
@@ -100,6 +101,6 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
           ),
         ],
       ),
-    );
+    ));
   }
 }

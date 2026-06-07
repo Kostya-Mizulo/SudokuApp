@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../shared/screen_frame.dart';
 import '../widgets/widgets.dart';
 
 class WinScreen extends StatelessWidget {
@@ -11,7 +12,7 @@ class WinScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Scaffold(
+    return ScreenFrame(child: Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
         children: [
@@ -49,6 +50,6 @@ class WinScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sudokuapp/sudoku_logic/sudoku_logic.dart';
 
+import '../../shared/screen_frame.dart';
 import '../../win_screen/view/view.dart';
 import '../bloc/bloc.dart';
 import '../widgets/widgets.dart';
@@ -77,7 +78,7 @@ class _Sudoku16x16GameViewState extends State<_Sudoku16x16GameView>
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SudokuGameBloc, SudokuGameState>(
+    return ScreenFrame(child: BlocListener<SudokuGameBloc, SudokuGameState>(
       listener: (context, state) {
         if (state is SudokuGameResolved) {
           _ticker?.cancel();
@@ -154,6 +155,6 @@ class _Sudoku16x16GameViewState extends State<_Sudoku16x16GameView>
           );
         },
       ),
-    );
+    ));
   }
 }

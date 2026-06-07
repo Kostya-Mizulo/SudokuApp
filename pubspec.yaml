@@ -33,7 +33,6 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  flutter_svg: ^2.3.0
   flutter_bloc: ^9.1.1
   path_provider: ^2.1.5
 
@@ -52,10 +51,11 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "ic_launcher"
   ios: true
-  image_path: "lib/resources/images/sudoku_icon_logo.png"
+  image_path: "lib/resources/images/logo_iphone.png"
+  remove_alpha_ios: true
   min_sdk_android: 21
-  adaptive_icon_background: "#ffffff"
-  adaptive_icon_foreground: "lib/resources/images/sudoku_icon_logo.png"
+  adaptive_icon_background: "#00B5C8"
+  adaptive_icon_foreground: "lib/resources/images/logo_iphone.png"
   web:
     generate: false
   windows:
@@ -80,8 +80,11 @@ flutter:
     - lib/resources/puzzles/hard.json
     - lib/resources/puzzles/master.json
     - lib/resources/puzzles/sixteen.json
-    - lib/resources/images/sudoku_icon.svg
-    - lib/resources/images/sudoku_icon_wide.png
+    - lib/resources/images/sudoku_reference.svg
+    - lib/resources/images/logo_android.png
+    - lib/resources/images/logo_iphone.png
+    - lib/resources/images/logo_ipad.png
+    - lib/resources/images/logo_tablet.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 512 512" width="512" height="512">
+
+  <defs>
+    <style><![CDATA[
+      @import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+    ]]></style>
+
+    <!-- Cyan glow (visible on light cells: U, O, U) -->
+    <filter id="fC" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="6.3" result="b"/>
+      <feComponentTransfer in="b" result="bo">
+        <feFuncA type="linear" slope="2.2"/>
+      </feComponentTransfer>
+      <feFlood flood-color="#00B5C8" result="c"/>
+      <feComposite in="c" in2="bo" operator="in"/>
+    </filter>
+
+    <!-- White glow (visible on cyan cells: S, D, K) -->
+    <filter id="fW" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="6.3" result="b"/>
+      <feComponentTransfer in="b" result="bo">
+        <feFuncA type="linear" slope="2.2"/>
+      </feComponentTransfer>
+      <feFlood flood-color="#FFFFFF" result="c"/>
+      <feComposite in="c" in2="bo" operator="in"/>
+    </filter>
+
+    <!-- Mask: glow appears only outside letter shapes -->
+    <mask id="mA" maskUnits="userSpaceOnUse" x="0" y="0" width="512" height="512">
+      <rect x="0" y="0" width="512" height="512" fill="#FFFFFF"/>
+      <text fill="#000000" x="80"  y="138" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">S</text>
+      <text fill="#000000" x="256" y="138" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">U</text>
+      <text fill="#000000" x="256" y="314" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">D</text>
+      <text fill="#000000" x="432" y="314" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">O</text>
+      <text fill="#000000" x="80"  y="490" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">K</text>
+      <text fill="#000000" x="256" y="490" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">U</text>
+    </mask>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="512" height="512" fill="#00B5C8"/>
+
+  <!-- ── Light cells: (row0,col1), (row1,col0), (row1,col2), (row2,col1) ── -->
+  <!-- Grid: 3 cells × 160px + 2 lines × 16px = 512px -->
+  <rect x="176" y="0"   width="160" height="160" fill="#EBF5F8"/>
+  <rect x="0"   y="176" width="160" height="160" fill="#EBF5F8"/>
+  <rect x="352" y="176" width="160" height="160" fill="#EBF5F8"/>
+  <rect x="176" y="352" width="160" height="160" fill="#EBF5F8"/>
+
+  <!-- ── Cyan glow (all letters; invisible where background = cyan) ── -->
+  <g filter="url(#fC)" mask="url(#mA)" fill="#000000">
+    <text x="80"  y="138" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">S</text>
+    <text x="256" y="138" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">U</text>
+    <text x="256" y="314" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">D</text>
+    <text x="432" y="314" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">O</text>
+    <text x="80"  y="490" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">K</text>
+    <text x="256" y="490" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">U</text>
+  </g>
+
+  <!-- ── White glow (all letters; invisible where background = white/light) ── -->
+  <g filter="url(#fW)" mask="url(#mA)" fill="#000000">
+    <text x="80"  y="138" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">S</text>
+    <text x="256" y="138" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">U</text>
+    <text x="256" y="314" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">D</text>
+    <text x="432" y="314" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">O</text>
+    <text x="80"  y="490" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">K</text>
+    <text x="256" y="490" text-anchor="middle" font-family="'Audiowide',sans-serif" font-size="160">U</text>
+  </g>
+
+  <!-- ── Grid lines ── -->
+  <rect x="160" y="0"   width="16"  height="512" fill="#0B1C28"/>
+  <rect x="336" y="0"   width="16"  height="512" fill="#0B1C28"/>
+  <rect x="0"   y="160" width="512" height="16"  fill="#0B1C28"/>
+  <rect x="0"   y="336" width="512" height="16"  fill="#0B1C28"/>
+
+  <!-- ── Crisp WHITE outlines — S, D, K (on cyan cells) ── -->
+  <text fill="none" stroke="#FFFFFF" stroke-width="2"
+        stroke-linejoin="round" stroke-linecap="round"
+        x="80"  y="138" text-anchor="middle"
+        font-family="'Audiowide',sans-serif" font-size="160">S</text>
+  <text fill="none" stroke="#FFFFFF" stroke-width="2"
+        stroke-linejoin="round" stroke-linecap="round"
+        x="256" y="314" text-anchor="middle"
+        font-family="'Audiowide',sans-serif" font-size="160">D</text>
+  <text fill="none" stroke="#FFFFFF" stroke-width="2"
+        stroke-linejoin="round" stroke-linecap="round"
+        x="80"  y="490" text-anchor="middle"
+        font-family="'Audiowide',sans-serif" font-size="160">K</text>
+
+  <!-- ── Crisp CYAN outlines — U, O, U (on light cells) ── -->
+  <text fill="none" stroke="#00B5C8" stroke-width="2"
+        stroke-linejoin="round" stroke-linecap="round"
+        x="256" y="138" text-anchor="middle"
+        font-family="'Audiowide',sans-serif" font-size="160">U</text>
+  <text fill="none" stroke="#00B5C8" stroke-width="2"
+        stroke-linejoin="round" stroke-linecap="round"
+        x="432" y="314" text-anchor="middle"
+        font-family="'Audiowide',sans-serif" font-size="160">O</text>
+  <text fill="none" stroke="#00B5C8" stroke-width="2"
+        stroke-linejoin="round" stroke-linecap="round"
+        x="256" y="490" text-anchor="middle"
+        font-family="'Audiowide',sans-serif" font-size="160">U</text>
+
+</svg>

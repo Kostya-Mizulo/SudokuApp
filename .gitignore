@@ -46,3 +46,6 @@ app.*.map.json
 
 # Claude Code
 .claude/
+
+# Local dev tools (icon generation scripts)
+tools/

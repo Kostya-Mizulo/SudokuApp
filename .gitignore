@@ -49,3 +49,6 @@ app.*.map.json
 
 # Local dev tools (icon generation scripts)
 tools/
+
+# Android signing keystores
+*.jks

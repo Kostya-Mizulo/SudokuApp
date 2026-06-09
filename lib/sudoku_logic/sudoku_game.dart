@@ -10,7 +10,6 @@ class SudokuGame {
         _sudokuSize = cells.length,
         _cells = cells,
         _isSudokuResolved = false,
-        _isNotesActivated = false,
         _numberButtonsVisibility = _buildInitialButtonVisibility(cells);
 
   SudokuGame.fromSession({
@@ -20,11 +19,10 @@ class SudokuGame {
     required List<List<int>> initialGrid,
     required List<List<int>> currentGrid,
   })  : _sudokuGridId = id,
-        _difficulty = difficulty,
+        _difficulty = difficulty, // ignore: prefer_initializing_formals
         _sudokuSize = resolvedGrid.length,
         _cells = _buildSessionCells(resolvedGrid, initialGrid, currentGrid),
         _isSudokuResolved = false,
-        _isNotesActivated = false,
         _numberButtonsVisibility =
             _buildSessionButtonVisibility(resolvedGrid, currentGrid);
 
@@ -89,11 +87,11 @@ class SudokuGame {
   }
 
   final int _sudokuGridId;
-  DifficultyLevel _difficulty;
-  int _sudokuSize;
-  Map<int, bool> _numberButtonsVisibility;
+  final DifficultyLevel _difficulty;
+  final int _sudokuSize;
+  final Map<int, bool> _numberButtonsVisibility;
   bool _isSudokuResolved = false;
-  bool _isNotesActivated = false;
+  bool isNotesActivated = false;
   final List<List<Cell>> _cells;
 
   int get sudokuGridId => _sudokuGridId;
@@ -108,14 +106,7 @@ class SudokuGame {
   int get sudokuSize => _sudokuSize;
   Map<int, bool> get numberButtonsVisibility => _numberButtonsVisibility;
   bool get isSudokuResolved => _isSudokuResolved;
-  bool get isNotesActivated => _isNotesActivated;
   List<List<Cell>> get cells => _cells;
-
-  set difficulty(DifficultyLevel value) => _difficulty = value;
-  set sudokuSize(int value) => _sudokuSize = value;
-  set numberButtonsVisibility(Map<int, bool> value) => _numberButtonsVisibility = value;
-  set isSudokuResolved(bool value) => _isSudokuResolved = value;
-  set isNotesActivated(bool value) => _isNotesActivated = value;
 
   void markCellsViaUserCellSelection(int row, int column) {
     _clearAllHighlights();

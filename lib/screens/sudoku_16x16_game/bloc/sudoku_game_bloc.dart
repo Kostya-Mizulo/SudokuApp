@@ -8,9 +8,9 @@ import 'sudoku_game_state.dart';
 
 class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
   SudokuGameBloc({
-    SudokuRepository? sudokuRepository,
+    required SudokuRepository sudokuRepository,
     ActiveSessionRepository? activeSessionRepository,
-  })  : _repository = sudokuRepository ?? const SudokuRepository(),
+  })  : _repository = sudokuRepository,
         _activeSessionRepository =
             activeSessionRepository ?? const ActiveSessionRepository(),
         super(SudokuGameInitial()) {
@@ -43,7 +43,6 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
     if (_game == null || !_game!.isSudokuResolved) return;
     await _repository.savePuzzleResolved(
       _game!.sudokuGridId,
-      _game!.difficulty,
       timeSeconds: _elapsedSeconds,
     );
     await _activeSessionRepository.clearSession();
@@ -154,6 +153,11 @@ class SudokuGameBloc extends Bloc<SudokuGameEvent, SudokuGameState> {
   ) async {
     emit(SudokuGameLoading());
     try {
+      if (await _activeSessionRepository.hasSession()) {
+        final session = await _activeSessionRepository.loadSession();
+        await _repository.markPuzzleAbandoned(session.id);
+        await _activeSessionRepository.clearSession();
+      }
       final puzzle = await _repository.getPuzzle(event.difficulty);
       _elapsedSeconds = 0;
       _game = SudokuGame.fromPuzzle(puzzle.id, event.difficulty, puzzle.cells);

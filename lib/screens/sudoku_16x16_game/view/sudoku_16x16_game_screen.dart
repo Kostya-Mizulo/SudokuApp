@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sudokuapp/repositories/sudoku_repository.dart';
 import 'package:sudokuapp/sudoku_logic/sudoku_logic.dart';
 
 import '../../shared/screen_frame.dart';
@@ -23,8 +24,10 @@ class Sudoku16x16GameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) {
-        final bloc = SudokuGameBloc();
+      create: (context) {
+        final bloc = SudokuGameBloc(
+          sudokuRepository: context.read<SudokuRepository>(),
+        );
         return _resume
             ? (bloc..add(SudokuGameResumed()))
             : (bloc..add(SudokuGameStarted(difficulty!)));
